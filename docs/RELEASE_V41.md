@@ -40,3 +40,36 @@
 5. Aggiornare la Bibbia con i test e correggere euristiche v40.
 
 **Nessuna modifica a credenziali o dati privati, nessun file musicale toccato.**
+
+## Aggiornamento v41.1 — 09/10/2026
+
+**Stato:** DOCUMENTATO nel codice; test con DOM simulato superati. **Collaudo visivo iPhone e test sonori Suno v6: DA_VERIFICARE.**
+
+Richiesta autore: mantenere personalizzazione profonda con **massimo 10 strumenti**, famiglie e sottotipi + opzione **Nessuno**. I preset sono suggerimenti, non impongono strumenti.
+
+### Implementato
+- 14 famiglie, 72 varianti in totale, opzione Nessuno per famiglia: Batteria, Basso, Percussioni; Piano, Organo, Sintetizzatori, Mallet e arpe; Chitarra elettrica, Chitarra acustica; Violino, Altri archi, Ottoni, Sassofono, Altri fiati.
+- Selettore per ogni famiglia; massimo 10 famiglie attive contemporaneamente. Contatore 0/10–10/10; undicesima scelta annullata.
+- Cori separati: Nessuno / solo maschili / solo femminili / misti; stili Soul, Funk call-and-response, Gospel, Eterei. Non consumano slot strumentali. Modalità strumentale disattiva i cori.
+- Ogni selezione produce un'indicazione in inglese sul ruolo musicale; Nessuno non viene riportato nello Style.
+- Rimossi riferimenti strumentali e ai cori forzati dal testo dei preset, che rispettano ora la strumentazione selezionata.
+- Pulsante Carica strumenti suggeriti dal preset: sovrascrive *solo su richiesta* le scelte manuali. Il semplice cambio di genere le conserva.
+- Pulsante Azzera strumenti. Con zero strumenti blocca la generazione senza inventare un arrangiamento.
+- Export JSON include famiglie, sottotipi, tipo e stile dei cori.
+- Conservato il laboratorio avanzato v40, non modificata la landing v40.
+
+### Test
+- 3 preset × 4 modalità cori = **12 test** con controllo del risultato e dell'assenza di cori se Nessuno.
+- Verificata emissione soltanto degli strumenti effettivamente scelti.
+- Limite 10 confermato, undicesima selezione respinta.
+- I prompt con strumenti suggeriti sono sotto gli 850 caratteri; 10 strumenti personalizzati possono superare la soglia **interna**, senza troncare lo Style.
+- Verifica sintattica JavaScript.
+- Deployment Vercel successivo alla correzione finale: READY.
+
+### Limiti / prossimi test
+- Al momento si sceglie una variante per famiglia; due pianoforti o due chitarre elettriche simultanei richiedono una successiva estensione senza sforare il massimo di 10 strumenti.
+- Collaudo visivo Safari iPhone ancora DA_VERIFICARE.
+- Suono e fedeltà di Suno v6 ancora DA_VERIFICARE con generazioni reali.
+- Il bundle HTML resta monolitico; la separazione in file sorgente è un'ottimizzazione futura.
+
+**URL Beta:** https://vricky-studio-v41-beta.vercel.app
