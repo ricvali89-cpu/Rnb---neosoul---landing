@@ -5001,7 +5001,7 @@ function v41MakeLyricsPreview(raw,instruments){
  let converted=v41TextToLyrics(raw);
  let lines=converted.text.split("\n");
  const sectionRE=/^\s*\[([A-Za-z][A-Za-z0-9 \-]*?)(?::([^\]]+))?\]\s*$/;
- function isSection(line){const m=line.match(sectionRE);return m&&/^(?:intro|verse(?:\s*\d+)?|pre[- ]?chorus|chorus|final chorus|post[- ]?chorus|bridge|outro)$/i.test(m[1])}
+ function isSection(line){const m=line.match(sectionRE);return m&&/^(?:intro|verse(?:\s*\d+)?|pre[- ]?chorus|chorus|final chorus|post[- ]?chorus|bridge|outro)$/i.test(m[1])?m:null}
  if(!lines.some(isSection)){
    const inferred=v41InferSectionRepetition(raw);
    if(!inferred)return {text:raw,warning:"Nessuna sezione riconoscibile con certezza: aggiungi [Verse], [Chorus], [Bridge] (o Strofa/Ritornello/Ponte). In assenza di tag, il testo rimane inalterato.",applied:0,sections:0};
