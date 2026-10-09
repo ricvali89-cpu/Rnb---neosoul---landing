@@ -89,3 +89,25 @@ Richiesta autore: mantenere personalizzazione profonda con **massimo 10 strument
 - **Test automatici (8 casi):** conservazione di tag/spazi, cori misti e falsetto, rispetto dei tag dettagliati, gestione testo senza struttura, conversione intestazioni italiane, ritornelli identici, disattivazione cori, brano strumentale. **8/8 riusciti** usando DOM simulato.
 
 Il collegamento alla landing originale v40 non è stato toccato. La Beta dedicata su Vercel distribuisce automaticamente main. Collaudo visivo Safari e generazioni audio reali ancora DA_VERIFICARE.
+
+## v41.3 — Velocità generale e BPM desiderati (09/10/2026)
+**Stato:** DOCUMENTATO nel codice; collaudo sonoro v6-mini e Safari iPhone DA_VERIFICARE.
+
+**DICHIARATO:** per le generazioni rapide serve distinguere fra cinque fasce di velocità e poter correggere il BPM target. Evitare che Energia alta acceleri un brano lento.
+
+- **Molto lento:** 55–70 BPM; rapido 64. Pocket spazioso, senza passaggi double-time.
+- **Lento:** 71–85 BPM; rapido 78. Neo Soul morbido, pause fra gli accenti.
+- **Moderato:** 86–100 BPM; rapido 94. R&B midtempo bilanciato.
+- **Mosso:** 101–115 BPM; rapido 108. Funk/R&B sincopato.
+- **Veloce:** 116–140 BPM; rapido 124. Groove brillante dal backbeat deciso.
+- Le fasce sono **euristiche di produzione VRicky**, non valori Suno ufficiali.
+- Il numero BPM target accetta interi 55–140, riallinea automaticamente la fascia e blocca input vuoti/non validi. Cambiare fascia inserisce il suo default.
+- Inizialmente il genere dà Funk 108, Neo Soul 82, Dark 96; dopo una personalizzazione dell'utente, cambiare genere **non cambia** i BPM manuali.
+- **Energia** ora governa solo dinamica e intensità: alta energia + Lento conserva il tempo Lento.
+- Se target <=85, Exclude aggiunge ritmiche ska/double-time/rushed. Non è una garanzia di conformità del modello.
+- Style compatto: la priorità va a BPM, groove, mood, energia e strumenti. Compressi i riempitivi se necessari, senza troncare il prompt.
+- Export JSON include tempoBand, bpmTarget, bpmStatus (DA_VERIFICARE); versione 41.3.0-beta.
+- Test: 17 verifiche iniziali delle interazioni + 45/45 combinazioni (3 generi x 5 velocità x 3 energie), Style default 705–850 caratteri. Tutti test DOM simulato; non verificati audio o Safari.
+
+**Beta:** https://vricky-studio-v41-beta.vercel.app
+**Fonte:** studio-v41.html e Bibbia Prompt v6 (GitHub main).
