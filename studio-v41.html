@@ -643,6 +643,12 @@ body:not(.rock-on) .rock-only{display:none!important}
 #v41-ui .v41-description{font-size:12px;color:#cfc1d7;line-height:1.5;margin:0 0 9px}
 @media(max-width:600px){#v41-ui .v41-instrument-grid,#v41-ui .v41-inline-selects{grid-template-columns:1fr}}
 
+
+#v41-ui .v41-lyrics-mode{grid-column:1/-1;margin:0 0 8px;border:1px solid #735977;border-radius:12px;padding:12px;background:#211a2a;display:grid;gap:10px}
+#v41-ui .v41-lyrics-mode legend{font-size:13px;color:#ffe2ef;font-weight:800;padding:0 7px}
+#v41-ui .v41-lyrics-mode label{display:flex;gap:9px;align-items:center;cursor:pointer;font-size:14px;color:#f8e7f4}
+#v41-ui .v41-lyrics-mode input{accent-color:#f180b5;min-width:19px;min-height:19px}
+#v41-ui #v41-lyrics-report{white-space:pre-line;border-left:2px solid #aa80e4;padding:9px;margin-bottom:12px;line-height:1.6}
 </style>
 </head>
 <body>
@@ -739,8 +745,14 @@ body:not(.rock-on) .rock-only{display:none!important}
   <div class="v41-grid">
     <label class="v41-field v41-span">Testo della canzone
       <textarea id="v41-lyrics-input" spellcheck="true" placeholder="[Verse 1]&#10;Scrivi qui le strofe...&#10;&#10;[Chorus]&#10;Scrivi qui il ritornello..."></textarea>
-      <span class="v41-hint">Puoi usare [Verse], [Chorus], [Bridge] o intestazioni come Strofa 1, Ritornello, Ponte. Un testo senza indicazioni resta invariato: non invento la struttura.</span>
+      <span class="v41-hint">Tag [Verse], [Chorus], [Bridge] e intestazioni italiane sono supportati. Il testo originale rimane sempre invariato.</span>
     </label>
+    <fieldset class="v41-lyrics-mode v41-span">
+      <legend>Elaborazione Lyrics</legend>
+      <label><input type="radio" name="v41-lyrics-mode" value="keep" checked> Mantieni i miei tag</label>
+      <label><input type="radio" name="v41-lyrics-mode" value="suggest"> Suggerisci metatag musicali</label>
+      <p class="v41-hint">Suggerimenti basati su regole locali e strumenti selezionati, non analisi IA. Indicazioni v6-mini sperimentali, da rivedere prima della copia.</p>
+    </fieldset>
   </div>
   <div class="v41-actions">
     <button type="button" onclick="v41FillSchema()">+ Schema testo</button>
@@ -752,8 +764,9 @@ body:not(.rock-on) .rock-only{display:none!important}
     <div class="v41-out-head"><strong>STYLE</strong><button type="button" onclick="v41Copy('v41-style')">Copia Style</button></div>
     <textarea class="v41-output v41-style" id="v41-style" aria-label="Style prompt modificabile"></textarea>
     <div class="v41-meta" id="v41-style-info"></div>
-    <div class="v41-out-head"><strong>LYRICS</strong><button type="button" onclick="v41Copy('v41-lyrics')">Copia Lyrics</button></div>
-    <textarea class="v41-output v41-lyrics" id="v41-lyrics" aria-label="Lyrics modificabile"></textarea>
+    <div class="v41-out-head"><strong>ANTEPRIMA LYRICS — modificabile</strong><button type="button" onclick="v41Copy('v41-lyrics')">Copia Lyrics</button></div>
+    <textarea class="v41-output v41-lyrics" id="v41-lyrics" aria-label="Anteprima Lyrics modificabile"></textarea>
+    <div class="v41-hint" id="v41-lyrics-report" aria-live="polite"></div>
     <div class="v41-out-head"><strong>EXCLUDE STYLES</strong><button type="button" onclick="v41Copy('v41-exclude')">Copia Exclude</button></div>
     <textarea class="v41-output" style="min-height:65px" id="v41-exclude" aria-label="Esclusioni modificabili"></textarea>
     <div class="v41-actions"><button type="button" onclick="v41Export()">Esporta scheda esperimento (.json)</button></div>
@@ -4890,6 +4903,10 @@ function v41BuildInstrumentUI(){
      if(c==="v41-choir"||c==="v41-voice")v41UpdateChoirUI();
    });
  }
+ document.querySelectorAll('input[name="v41-lyrics-mode"]').forEach(r=>r.addEventListener("change",()=>{
+   if(id("v41-results"))id("v41-results").classList.remove("visible");
+   if(id("v41-feedback"))id("v41-feedback").textContent=r.value==="keep"?"Mantieni i miei tag: verranno preservati integralmente.":"Suggerimenti musicali: usa Genera per creare l'anteprima, poi rivedila.";
+ }));
  v41LoadSuggested();
  v41UpdateChoirUI();
 }
@@ -4947,6 +4964,89 @@ function v41TextToLyrics(src){
  if(found)return {text:lines.join("\n")+"\n\n[End]",warning:"Ho convertito soltanto le intestazioni riconosciute (Strofa, Ritornello, Bridge ecc.). Controlla la suddivisione prima di copiare."};
  return {text,warning:"Testo conservato senza modifiche: non posso distinguere con certezza strofe e ritornello dalle sole righe vuote. Aggiungi tag [Verse] e [Chorus], oppure usa '+ Schema testo' quando il campo è vuoto."};
 }
+
+/* v41.2 — deterministic lyric arrangement assistant (no external AI). */
+function v41LyricsMode(){
+ const radio=document.querySelector('input[name="v41-lyrics-mode"]:checked');
+ return radio&&radio.value==="suggest"?"suggest":"keep";
+}
+function v41SectionMood(lines){
+ const str=lines.join(" ").toLowerCase();
+ if(/\b(?:notte|buio|ombra|solitud|night|lonely|shadow|noche|soledad)\w*/iu.test(str))return "subtle nocturnal tension";
+ if(/\b(?:amore|cuore|bacio|resta|love|heart|stay|beso|corazón|amor)\w*/iu.test(str))return "warm emotional delivery";
+ if(/\b(?:balla|ritmo|danza|fuoco|dance|groove|fire|baila|fuego)\w*/iu.test(str))return "bright rhythmic confidence";
+ if(/\b(?:addio|piang|perd|lacrim|goodbye|cry|lost|llor|adiós)\w*/iu.test(str))return "bittersweet restraint";
+ return "";
+}
+function v41InferSectionRepetition(source){
+ const parts=source.trim().split(/\n\s*\n+/).filter(x=>x.trim());
+ if(parts.length<3)return null;
+ const norms=parts.map(x=>x.toLowerCase().replace(/[^\p{L}\p{N}\s]/gu,"").replace(/\s+/g," ").trim());
+ const counts={};for(const x of norms)counts[x]=(counts[x]||0)+1;
+ const repeated=new Set(Object.keys(counts).filter(x=>x.length>=12&&counts[x]>=2));
+ if(!repeated.size)return null;
+ let verse=0;
+ return parts.map((p,i)=>repeated.has(norms[i])?"[Chorus]\n"+p.trim():"[Verse "+(++verse)+"]\n"+p.trim()).join("\n\n");
+}
+function v41BestInstrument(inst){
+ const order=["electric-guitar","sax","violin","piano","brass","woodwind","organ","mallets","acoustic-guitar","synth","strings","bass","percussion"];
+ return order.map(f=>inst.find(i=>i.family===f)).find(Boolean)||null;
+}
+function v41MakeLyricsPreview(raw,instruments){
+ const mode=v41LyricsMode();
+ if(mode==="keep")return {text:raw,warning:"Modalità fedele: testo e metatag originali conservati esattamente. Anteprima modificabile.",applied:0,sections:0};
+ if(!raw.trim())return {text:"",warning:"Incolla un testo. Il generatore non inventa parole né sezioni senza indizi.",applied:0,sections:0};
+ const lead=id("v41-voice").value;
+ const choir=lead==="instrumental"?"none":id("v41-choir").value;
+ let converted=v41TextToLyrics(raw);
+ let lines=converted.text.split("\n");
+ const sectionRE=/^\s*\[([A-Za-z][A-Za-z0-9 \-]*?)(?::([^\]]+))?\]\s*$/;
+ function isSection(line){const m=line.match(sectionRE);return m&&/^(?:intro|verse(?:\s*\d+)?|pre[- ]?chorus|chorus|final chorus|post[- ]?chorus|bridge|outro)$/i.test(m[1])}
+ if(!lines.some(isSection)){
+   const inferred=v41InferSectionRepetition(raw);
+   if(!inferred)return {text:raw,warning:"Nessuna sezione riconoscibile con certezza: aggiungi [Verse], [Chorus], [Bridge] (o Strofa/Ritornello/Ponte). In assenza di tag, il testo rimane inalterato.",applied:0,sections:0};
+   lines=inferred.split("\n");
+   converted.warning="Struttura ipotizzata dalle strofe RIPETUTE IDENTICHE. Controlla le etichette proposte.";
+ }
+ const entries=[];
+ for(let i=0;i<lines.length;i++){
+   const m=isSection(lines[i]);if(!m)continue;
+   let next=i+1;while(next<lines.length&&!sectionRE.test(lines[next]))next++;
+   entries.push({pos:i,name:m[1],desc:m[2],emotion:v41SectionMood(lines.slice(i+1,next)),length:lines.slice(i+1,next).filter(x=>x.trim()&&!sectionRE.test(x)).length});
+ }
+ let applied=0;
+ for(const p of entries){
+   if(p.desc)continue; // Existing user-specified directions have precedence.
+   const key=p.name.toLowerCase(),h=[],hasDrums=instruments.some(x=>x.family==="drums"),hasBass=instruments.some(x=>x.family==="bass"),hasKeys=instruments.some(x=>["piano","organ","synth"].includes(x.family));
+   if(key==="intro")h.push(hasKeys?"sparse keyboard intro":hasDrums?"drums enter gradually":"sparse opening");
+   else if(key.startsWith("verse"))h.push("laid-back groove",...(lead==="instrumental"?[]:["intimate lead delivery"]));
+   else if(key.startsWith("pre"))h.push("build energy into the chorus",...(hasDrums?["restrained drum lift"]:[]));
+   else if(key==="chorus"||key==="final chorus"){
+     h.push(key==="final chorus"?"final uplifting chorus":"strong memorable hook with wider dynamics");
+     if(choir!=="none")h.push(v41Choirs[choir]+" in close harmonies");
+     if(hasDrums&&hasBass)h.push("tight bass-kick pocket");
+     if(key==="chorus"&&(lead==="male"||lead==="duet")&&p.length>1&&id("v41-mood").value!=="euphoric")h.push("subtle falsetto lift at hook ending");
+   }
+   else if(key==="bridge")h.push("drop in dynamics",...(hasKeys?["sparse keyboard space"]:[]));
+   else if(key.startsWith("post"))h.push("short rhythmic response");
+   else if(key==="outro")h.push("natural instrumental resolution");
+   if(p.emotion&&!["intro","outro"].includes(key))h.push(p.emotion);
+   if(h.length){lines[p.pos]="["+p.name+": "+h.slice(0,4).join(", ")+"]";applied++}
+ }
+ // A single short instrumental transition between a bridge and the final chorus.
+ const solo=v41BestInstrument(instruments);
+ const final=lines.findIndex(x=>/^\s*\[Final Chorus(?::[^\]]*)?\]\s*$/i.test(x));
+ const bridge=lines.findIndex(x=>/^\s*\[Bridge(?::[^\]]*)?\]\s*$/i.test(x));
+ if(solo&&final>=0&&bridge>=0&&bridge<final&&!lines.some(x=>/^\s*\[Instrumental (Break|Solo|Fill|Interlude)/i.test(x))){
+   lines.splice(final,0,"[Instrumental Break: brief "+solo.label.toLowerCase()+" melodic fill]","");
+   applied++;
+ }
+ const summary="Sezioni riconosciute: "+entries.length+". Suggerimenti inseriti: "+applied+
+  ". Cori: "+(choir==="none"?"nessuno":{male:"solo maschili",female:"solo femminili",mixed:"misti"}[choir])+
+  ". Queste indicazioni sono ipotesi musicali da ascoltare e verificare in Suno v6-mini; puoi modificarle direttamente prima di copiare.";
+ return {text:lines.join("\n"),warning:summary+(converted.warning?"\n"+converted.warning:""),applied,sections:entries.length};
+}
+
 function v41Generate(){
  const preset=id("v41-preset").value,mood=id("v41-mood").value,energy=id("v41-energy").value,voice=id("v41-voice").value,mode=id("v41-mode").value;
  const p=v41Presets[preset];
@@ -4965,19 +5065,21 @@ function v41Generate(){
  const spec=instruments.map(x=>x.style);
  const style=[p.genre,moods[mood],energyNotes[energy],bpm+" BPM",...spec,voices[voice],choirStyle,arrangement,mix,(hasBass&&hasDrums?"clear kick and bass separation":"")+" short resolved outro"]
    .filter(Boolean).join(", ").replace(/\s+/g," ").trim().replace(/,\s+short resolved outro$/,"; short resolved outro")+".";
- const lx=v41TextToLyrics(id("v41-lyrics-input").value);
+ const lx=v41MakeLyricsPreview(id("v41-lyrics-input").value,instruments);
  let exc=p.exclude;
  if(voice==="instrumental")exc+=", lead vocals, lyrics";
  const variety=mode==="precise"?"0 (controllo dello Style)":"circa 35 (esperimento, può alterare lo Style)";
  id("v41-style").value=style;
- id("v41-lyrics").value=voice==="instrumental"?"[Instrumental Intro]\n\n[Instrumental Verse]\n\n[Instrumental Chorus]\n\n[Instrumental Bridge]\n\n[Instrumental Outro]\n\n[End]":lx.text;
+ id("v41-lyrics").value=voice==="instrumental"&&v41LyricsMode()==="suggest"?"[Instrumental Intro]\n\n[Instrumental Verse]\n\n[Instrumental Chorus]\n\n[Instrumental Bridge]\n\n[Instrumental Outro]\n\n[End]":lx.text;
+ id("v41-lyrics-report").textContent=voice==="instrumental"&&v41LyricsMode()==="suggest"?"Strumentale: struttura musicale generata senza voce, modificabile prima della copia.":lx.warning;
  id("v41-exclude").value=exc;
  id("v41-style-info").textContent=instruments.length+"/10 strumenti · "+style.length+" caratteri · Variety suggerita: "+variety+" · BPM indicativo";
  const messages=[];
  if(style.length>850)messages.push("Style oltre 850 caratteri (soglia interna, non limite Suno): il prompt resta completo. Riduci strumenti o descrizioni se i risultati perdono precisione.");
  if(instruments.length>6)messages.push("Hai scelto "+instruments.length+" strumenti: ascolta se sono distinguibili, soprattutto nel ritornello.");
  if(!hasDrums&&!hasBass)messages.push("Hai escluso batteria e basso: il groove sarà affidato agli strumenti rimasti, senza inventare una sezione ritmica nel prompt.");
- if(lx.warning&&voice!=="instrumental")messages.push(lx.warning);
+ if(v41LyricsMode()==="suggest"&&lx.applied)messages.push(lx.applied+" suggerimenti musicali inseriti nella sola anteprima Lyrics: revisionali prima della copia.");
+ if(v41LyricsMode()==="suggest"&&!lx.applied&&voice!=="instrumental")messages.push("Nessun metatag inserito: mancano sezioni riconoscibili.");
  if(voice==="duet")messages.push("Duetto: usa [Male Vocals] e [Female Vocals] nei Lyrics nei punti dei cambi voce.");
  if(mode==="creative")messages.push("Creativa: prima confronta una generazione con Variety 0.");
  if(!messages.length)messages.push("Prompt pronto: contiene solo gli strumenti selezionati e la configurazione dei cori.");
@@ -5002,7 +5104,7 @@ async function v41Copy(which){
 }
 function v41Export(){
  if(!id("v41-results").classList.contains("visible")){id("v41-feedback").textContent="Genera prima il prompt.";return}
- const obj={document:"VRicky Studio v41 experiment",version:"41.1.0-beta",date:new Date().toISOString(),source:"docs/BIBBIA_PROMPT_SUNO_V6.md",status:"DA_VERIFICARE",preset:id("v41-preset").value,mood:id("v41-mood").value,energy:id("v41-energy").value,voice:id("v41-voice").value,mode:id("v41-mode").value,instruments:v41SelectedInstruments(),choir:id("v41-voice").value==="instrumental"?"none":id("v41-choir").value,choirStyle:id("v41-choir-style").value,style:id("v41-style").value,lyrics:id("v41-lyrics").value,exclude:id("v41-exclude").value,modelSuggested:"v6",varietySuggested:id("v41-mode").value==="precise"?0:35,maxModeSuggested:false,notes:"No audio tests performed in this export"};
+ const obj={document:"VRicky Studio v41 experiment",version:"41.2.0-beta",date:new Date().toISOString(),source:"docs/BIBBIA_PROMPT_SUNO_V6.md",status:"DA_VERIFICARE",preset:id("v41-preset").value,mood:id("v41-mood").value,energy:id("v41-energy").value,voice:id("v41-voice").value,mode:id("v41-mode").value,lyricsMode:v41LyricsMode(),lyricsOriginal:id("v41-lyrics-input").value,instruments:v41SelectedInstruments(),choir:id("v41-voice").value==="instrumental"?"none":id("v41-choir").value,choirStyle:id("v41-choir-style").value,style:id("v41-style").value,lyrics:id("v41-lyrics").value,exclude:id("v41-exclude").value,modelSuggested:"v6",varietySuggested:id("v41-mode").value==="precise"?0:35,maxModeSuggested:false,notes:"No audio tests performed in this export"};
  const blob=new Blob([JSON.stringify(obj,null,2)],{type:"application/json"});
  const u=URL.createObjectURL(blob);const a=document.createElement("a");a.href=u;a.download="vricky-v41-experiment.json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);
  id("v41-feedback").textContent="Scheda esperimento esportata; nessun dato trasmesso a un server.";
@@ -5012,7 +5114,8 @@ function v41UseAdvanced(){
  generatePrompt();
  id("v41-style").value=id("style-raw").value;
  id("v41-exclude").value=id("excl-out").textContent;
- const txt=id("v41-lyrics-input").value;id("v41-lyrics").value=v41TextToLyrics(txt).text;
+ const txt=id("v41-lyrics-input").value;const lx=v41MakeLyricsPreview(txt,v41SelectedInstruments());id("v41-lyrics").value=lx.text;
+ id("v41-lyrics-report").textContent=lx.warning;
  id("v41-style-info").textContent="Importazione dalla modalità avanzata v40 · controlla lo Style e gli slider (non è il preset rapido v41).";
  id("v41-results").classList.add("visible");
  id("v41-feedback").textContent="Style avanzato importato. Le impostazioni e le euristiche v40 non sono validate su v6: confronta prima con la modalità Precisa.";
@@ -5026,7 +5129,7 @@ function v41Init(){
   const next=node.nextElementSibling;target.appendChild(node);node=next;count++;
  }
  v41BuildInstrumentUI();
- document.title="VRicky Studio v41.1 — R&B Neo Soul Funk";
+ document.title="VRicky Studio v41.2 — R&B Neo Soul Funk";
  const head=document.querySelector(".container > header h1");if(head)head.textContent="VRicky Studio v41";
  const sub=document.querySelector(".container > header p");if(sub)sub.textContent="R&B · Neo Soul · Funk — beta v41, laboratorio avanzato v40 integrato";
  v41Generate();
@@ -5040,6 +5143,8 @@ window.v41InstrumentChanged=v41InstrumentChanged;
 window.v41SetInstruments=v41SetInstruments;
 window.v41LoadSuggested=v41LoadSuggested;
 window.v41ClearInstruments=v41ClearInstruments;
+window.v41LyricsMode=v41LyricsMode;
+window.v41MakeLyricsPreview=v41MakeLyricsPreview;
 window.v41Generate=v41Generate;
 window.v41FillSchema=v41FillSchema;
 window.v41Copy=v41Copy;
