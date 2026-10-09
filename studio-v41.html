@@ -618,6 +618,31 @@ body:not(.rock-on) .rock-only{display:none!important}
 .v41-advanced-tip{font-size:12px;color:#b7aabb;line-height:1.5;margin:12px 0}
 @media(max-width:600px){#v41-ui{padding:15px;margin:12px 0}.v41-grid{grid-template-columns:1fr}.v41-heading{flex-direction:column}.v41-heading h2{font-size:24px}.v41-actions button{flex:1}.v41-field textarea{font-size:16px}}
 
+
+/* v41.1 Instrument Library — functional selections, not hard-coded preset instruments */
+#v41-ui .v41-instruments{margin-top:18px;border:1px solid #685071;border-radius:12px;padding:15px;background:#1a1622}
+#v41-ui .v41-instrument-header{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-bottom:8px}
+#v41-ui .v41-instrument-header h3{margin:0;font-size:17px;font-family:system-ui,sans-serif;color:#ffe7f2}
+#v41-ui .v41-counter{display:inline-flex;align-items:center;gap:5px;font-size:14px;font-weight:800;border:1px solid #8d6384;padding:6px 10px;border-radius:20px;color:#ffd0ec}
+#v41-ui .v41-counter.is-max{border-color:#ffc176;color:#ffc176}
+#v41-ui .v41-counter.is-over{border-color:#ff717d;color:#ff717d}
+#v41-ui .v41-section-group{border-top:1px solid #4c3c52;padding:9px 0 6px}
+#v41-ui .v41-section-group summary{cursor:pointer;font-weight:750;font-size:13px;color:#f4d0ec;padding:5px 0;list-style:none}
+#v41-ui .v41-section-group summary::before{content:"▸";color:#fd8ab2;margin-right:8px}
+#v41-ui .v41-section-group[open] summary::before{content:"▾"}
+#v41-ui .v41-section-group summary::-webkit-details-marker{display:none}
+#v41-ui .v41-instrument-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;padding:10px 0}
+#v41-ui .v41-inst-label{display:flex;flex-direction:column;gap:5px;font-size:12px;color:#eee0ed;font-weight:700}
+#v41-ui .v41-inst-label select{min-width:0;width:100%;max-width:100%;padding:11px 10px;background:#110f1a;color:#f8f2ff;border:1px solid #59455d;border-radius:9px;font-family:system-ui,-apple-system,sans-serif;font-size:14px}
+#v41-ui .v41-inst-label select.is-selected{border-color:#f99abe;background:#2c1a34}
+#v41-ui .v41-inst-label select:focus-visible{outline:2px solid #ff92b1;outline-offset:2px}
+#v41-ui .v41-inline-selects{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin:12px 0}
+#v41-ui .v41-mini-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin:8px 0 2px}
+#v41-ui .v41-mini-actions button{font-size:12px;padding:9px 11px}
+#v41-ui .v41-inst-warning{margin:8px 0 0;color:#ffcab5;font-size:12px;line-height:1.5;min-height:0}
+#v41-ui .v41-description{font-size:12px;color:#cfc1d7;line-height:1.5;margin:0 0 9px}
+@media(max-width:600px){#v41-ui .v41-instrument-grid,#v41-ui .v41-inline-selects{grid-template-columns:1fr}}
+
 </style>
 </head>
 <body>
@@ -675,6 +700,43 @@ body:not(.rock-on) .rock-only{display:none!important}
         <option value="creative">Creativa — pi&ugrave; esplorazione</option>
       </select>
     </label>
+  </div>
+
+  <section class="v41-instruments" aria-label="Libreria strumenti">
+    <div class="v41-instrument-header">
+      <h3>🎼 Arrangiamento personalizzato</h3>
+      <span id="v41-inst-count" class="v41-counter" role="status" aria-live="polite">0/10 strumenti</span>
+    </div>
+    <p class="v41-description">Apri una famiglia (Piano, Chitarre, Batterie, Violini, ecc.), scegli un sottotipo oppure <strong>Nessuno</strong>. Ogni selezione occupa 1 dei 10 posti. Gli strumenti selezionati, non quelli predefiniti del preset, compongono il prompt finale.</p>
+    <div class="v41-mini-actions">
+      <button type="button" onclick="v41LoadSuggested()">Carica strumenti suggeriti dal preset</button>
+      <button type="button" onclick="v41ClearInstruments()">Azzera strumenti</button>
+    </div>
+    <div id="v41-instrument-groups"></div>
+    <div class="v41-inst-warning" id="v41-inst-warning" role="status" aria-live="polite"></div>
+    <h3 class="v41-section-title">🎤 Cori e armonizzazioni vocali</h3>
+    <div class="v41-inline-selects">
+      <label class="v41-field">Tipo di cori
+        <select id="v41-choir">
+          <option value="none">Nessuno</option>
+          <option value="male">Solo maschili</option>
+          <option value="female">Solo femminili</option>
+          <option value="mixed">Misti (uomini e donne)</option>
+        </select>
+      </label>
+      <label class="v41-field">Stile dei cori
+        <select id="v41-choir-style">
+          <option value="soul">Soul morbidi e armonizzati</option>
+          <option value="funk">Funky — risposta ritmica</option>
+          <option value="gospel">Gospel — armonie piene</option>
+          <option value="airy">Eterei — sottofondo discreto</option>
+        </select>
+      </label>
+    </div>
+    <p class="v41-hint">I cori non contano nel limite dei 10 strumenti. In modalità Strumentale vengono automaticamente esclusi dal prompt.</p>
+  </section>
+
+  <div class="v41-grid">
     <label class="v41-field v41-span">Testo della canzone
       <textarea id="v41-lyrics-input" spellcheck="true" placeholder="[Verse 1]&#10;Scrivi qui le strofe...&#10;&#10;[Chorus]&#10;Scrivi qui il ritornello..."></textarea>
       <span class="v41-hint">Puoi usare [Verse], [Chorus], [Bridge] o intestazioni come Strofa 1, Ritornello, Ponte. Un testo senza indicazioni resta invariato: non invento la struttura.</span>
@@ -4637,6 +4699,208 @@ const v41Presets={
   neo:{genre:"Intimate modern neo-soul and contemporary R&B",bpm:82,drums:"unhurried laid-back pocket, soft snare ghost notes and clean restrained kick",bass:"rounded electric bass answering the vocal in melodic phrases",guitar:"sparse clean guitar replies in the vocal gaps",keys:"warm Rhodes sustaining extended jazzy chords with room for breaths",arrangement:"minimal intimate verses blooming into a rich harmonized chorus, a reduced bridge, then a final dynamic lift",exclude:"aggressive trap hi-hat rolls, giant orchestral drums"},
   dark:{genre:"Nocturnal contemporary R&B rooted in syncopated funk",bpm:96,drums:"dry punchy backbeat, concise ghost notes and steady danceable pocket",bass:"articulate warm synth bass locking to the kick without overpowering it",guitar:"clean syncopated guitar stabs answering the lead between lines",keys:"muted analog synth chords supported by sparse Rhodes accents",arrangement:"rhythmically active verses, brief tension-building pre-chorus, wide memorable chorus and sparse bridge",exclude:"EDM festival drops, cinematic trailer percussion"}
 };
+
+const v41Families=[
+ {key:"drums",label:"Batteria",group:"Ritmica",options:[
+ ["funk-live","Batteria funk live","tight live funk kit, kick/snare backbeat with ghost notes"],
+ ["neo-pocket","Batteria Neo Soul","laid-back neo-soul drum pocket, light snare ghost notes"],
+ ["rnb-tight","Batteria R&B moderna","modern R&B drum kit, crisp controlled kick and rimshot"],
+ ["boom-bap","Batteria boom bap","swung boom-bap drum kit with dusty snare"],
+ ["disco-kit","Batteria disco funk","danceable four-on-the-floor disco-funk drum kit"],
+ ["electronic","Drum machine elettronica","dry electronic drum machine, tight punchy backbeat"],
+ ["brushes","Batteria spazzole jazz","soft jazz brushes on a close-mic drum kit"]
+ ]},
+ {key:"bass",label:"Basso",group:"Ritmica",options:[
+ ["finger","Basso elettrico fingerstyle","warm fingerstyle electric bass, syncopated with kick"],
+ ["slap","Basso slap funky","percussive slap bass riff driving the funk groove"],
+ ["fretless","Basso fretless","smooth fretless bass with melodic sliding fills"],
+ ["synth","Synth bass analogico","articulate analog synth-bass pulsing with kick"],
+ ["sub","Sub-bass 808","deep 808 sub bass, sparse sustained notes"],
+ ["upright","Contrabbasso","warm upright acoustic bass, rounded plucked notes"]
+ ]},
+ {key:"percussion",label:"Percussioni",group:"Ritmica",options:[
+ ["congas","Congas","soft syncopated conga patterns"],
+ ["bongos","Bongos","light bongo counter-rhythm"],
+ ["tambourine","Tamburello","bright tambourine accents on backbeats"],
+ ["shaker","Shaker","subtle sixteenth-note shaker pulse"],
+ ["claps","Claps e finger snaps","dry handclaps and finger snaps"],
+ ["cowbell","Campanaccio funk","sparse rhythmic funk cowbell"]
+ ]},
+ {key:"piano",label:"Piano",group:"Piano e tastiere",options:[
+ ["rhodes","Piano Rhodes","Rhodes electric piano, warm extended jazz chords"],
+ ["grand","Pianoforte a coda","acoustic grand piano, soulful chord comping"],
+ ["upright","Pianoforte verticale","intimate felt upright piano, soft warm chords"],
+ ["wurlitzer","Piano Wurlitzer","Wurlitzer electric piano, pulsing warm tremolo"],
+ ["electric","Piano elettrico digitale","clean digital electric piano, gentle syncopated chords"]
+ ]},
+ {key:"organ",label:"Organo",group:"Piano e tastiere",options:[
+ ["hammond","Hammond B3","Hammond B3 organ with warm rotary swells"],
+ ["gospel","Organo gospel","rich gospel church organ, restrained chorus swells"],
+ ["vintage","Organo vintage","gritty vintage electric organ, sparse sustained chords"]
+ ]},
+ {key:"synth",label:"Sintetizzatori",group:"Piano e tastiere",options:[
+ ["analog-pad","Pad analogico","subtle warm analog synthesizer pad"],
+ ["dark","Synth scuro","dark filtered analog synth pulses"],
+ ["arpeggio","Arpeggiatore","bright synthesizer arpeggio under the groove"],
+ ["lead","Synth lead melodico","smooth monophonic synth lead answering vocals"],
+ ["strings","Synth strings","soft synthetic string pad in the background"]
+ ]},
+ {key:"mallets",label:"Mallet e arpe",group:"Piano e tastiere",options:[
+ ["clavinet","Clavinet funky","clavinet, percussive syncopated funk riff"],
+ ["vibraphone","Vibrafono","soft vibraphone mallet melody"],
+ ["marimba","Marimba","warm marimba ostinato"],
+ ["kalimba","Kalimba","delicate plucked kalimba pattern"],
+ ["harp","Arpa","delicate harp arpeggio between vocal phrases"]
+ ]},
+ {key:"electric-guitar",label:"Chitarra elettrica",group:"Chitarre",options:[
+ ["muted","Funk clean palm-muted","clean palm-muted funk guitar, sixteenth-note offbeat chops"],
+ ["strat","Stratocaster clean","bright clean electric guitar, rhythmic chord stabs"],
+ ["wah","Chitarra wah-wah","wah-wah electric guitar sweeping syncopated accents"],
+ ["jazz","Jazz guitar hollow-body","warm hollow-body jazz guitar, sparse chord voicings"],
+ ["chorus","Chitarra chorus","clean chorus-effect electric guitar, shimmering arpeggios"],
+ ["blues","Chitarra blues overdrive","gentle overdriven blues guitar, expressive short bends"],
+ ["solo","Chitarra solista melodica","singing melodic electric guitar lead, restrained vibrato"]
+ ]},
+ {key:"acoustic-guitar",label:"Chitarra acustica",group:"Chitarre",options:[
+ ["steel","Acustica steel-string","steel-string acoustic guitar, delicate syncopated strums"],
+ ["nylon","Classica nylon","nylon-string classical guitar, soft fingerpicked figures"],
+ ["finger","Acustica fingerstyle","fingerstyle acoustic guitar, sparse warm arpeggios"],
+ ["12string","Acustica 12 corde","bright layered twelve-string acoustic guitar"]
+ ]},
+ {key:"violin",label:"Violino",group:"Archi e fiati",options:[
+ ["solo","Violino solista classico","solo acoustic violin, expressive long legato phrases"],
+ ["soul","Violino soul con vibrato","warm solo violin, lyrical vibrato answering the voice"],
+ ["pizz","Violino pizzicato","pizzicato violin playing short rhythmic notes"],
+ ["electric","Violino elettrico","electric violin, smooth sustained melodic lines"],
+ ["section","Sezione violini","small orchestral violin section swelling in chorus"],
+ ["baroque","Violino barocco","light baroque violin ornaments and delicate runs"]
+ ]},
+ {key:"strings",label:"Altri archi",group:"Archi e fiati",options:[
+ ["cello","Violoncello","warm solo cello, low lyrical counter-melody"],
+ ["viola","Viola","soft viola legato harmonies"],
+ ["quartet","Quartetto d'archi","intimate string quartet with restrained chord swells"],
+ ["section","Sezione d'archi","cinematic orchestral strings opening at the chorus"],
+ ["pizz","Archi pizzicati","plucked string ensemble marking syncopated accents"]
+ ]},
+ {key:"brass",label:"Ottoni",group:"Archi e fiati",options:[
+ ["trumpet-muted","Tromba con sordina","muted trumpet playing smoky short responses"],
+ ["trumpet-bright","Tromba soul","bright soulful trumpet accents"],
+ ["section","Sezione fiati funky","tight funk brass section, syncopated horn stabs"],
+ ["trombone","Trombone","warm trombone syncopated short stabs"],
+ ["flugelhorn","Flicorno","mellow flugelhorn melodic fills"]
+ ]},
+ {key:"sax",label:"Sassofono",group:"Archi e fiati",options:[
+ ["tenor","Sax tenore","warm soulful tenor sax melodic responses"],
+ ["alto","Sax contralto","bright alto sax short melodic fills"],
+ ["soprano","Sax soprano","airy soprano sax smooth lyrical phrases"],
+ ["baritone","Sax baritono","low baritone sax rhythmic stabs"]
+ ]},
+ {key:"woodwind",label:"Altri fiati",group:"Archi e fiati",options:[
+ ["flute","Flauto traverso","breathy flute solo with delicate high motifs"],
+ ["clarinet","Clarinetto","warm clarinet soft melodic response"],
+ ["oboe","Oboe","expressive oboe solo, restrained long notes"],
+ ["bassclarinet","Clarinetto basso","low bass clarinet, woody dark counter-melody"]
+ ]}
+];
+const v41Suggested={
+ funk:{drums:"funk-live",bass:"finger",percussion:"tambourine",piano:"rhodes",mallets:"clavinet","electric-guitar":"muted"},
+ neo:{drums:"neo-pocket",bass:"fretless",piano:"rhodes","electric-guitar":"jazz",strings:"quartet"},
+ dark:{drums:"electronic",bass:"synth",synth:"dark",piano:"wurlitzer","electric-guitar":"chorus"}
+};
+const v41PresetChoirs={funk:["mixed","funk"],neo:["male","soul"],dark:["female","airy"]};
+const v41Choirs={none:"",male:"male backing vocals",female:"female backing vocals",mixed:"mixed male and female backing vocals"};
+const v41ChoirStyles={soul:"soft stacked soul harmonies entering on the chorus",funk:"tight funky call-and-response hits on the hook",gospel:"full gospel-style harmonies in the chorus",airy:"restrained airy layered harmonies behind the lead"};
+function v41SelectedInstruments(){
+ return v41Families.map(f=>{
+   const el=id("v41-inst-"+f.key);
+   const v=el?el.value:"";
+   const found=f.options.find(o=>o[0]===v);
+   return found?{family:f.key,familyName:f.label,variant:found[0],label:found[1],style:found[2]}:null;
+ }).filter(Boolean);
+}
+function v41InstrumentStatus(message){
+ const selected=v41SelectedInstruments();
+ const counter=id("v41-inst-count"),warning=id("v41-inst-warning");
+ if(counter){counter.textContent=selected.length+"/10 strumenti";counter.classList.toggle("is-max",selected.length===10);counter.classList.toggle("is-over",selected.length>10)}
+ if(warning)warning.textContent=message||((selected.length>6)?"Sono selezionati "+selected.length+" strumenti: va bene, ma il prompt potrebbe essere denso. Valuta la separazione degli elementi e confronta i risultati.":"");
+ return selected;
+}
+function v41InstrumentChanged(select){
+ const previous=select.dataset.previous||"";
+ if(v41SelectedInstruments().length>10){
+    select.value=previous;v41InstrumentStatus("Massimo 10 strumenti: per aggiungerne un altro imposta una famiglia su «Nessuno».");return;
+ }
+ select.dataset.previous=select.value;
+ select.classList.toggle("is-selected",!!select.value);
+ v41InstrumentStatus("");
+ if(id("v41-results"))id("v41-results").classList.remove("visible");
+}
+function v41SetInstruments(values){
+ for(const f of v41Families){
+   const el=id("v41-inst-"+f.key);if(!el)continue;
+   const val=values[f.key]||"";
+   el.value=f.options.some(o=>o[0]===val)?val:"";
+   el.dataset.previous=el.value;
+   el.classList.toggle("is-selected",!!el.value);
+ }
+ const selected=v41InstrumentStatus("");
+ if(selected.length>10)throw Error("Invalid suggested instrument preset");
+ if(id("v41-results"))id("v41-results").classList.remove("visible");
+ return selected;
+}
+function v41LoadSuggested(){
+ const k=id("v41-preset").value;
+ v41SetInstruments(v41Suggested[k]||{});
+ const vocals=v41PresetChoirs[k]||["none","soul"];
+ id("v41-choir").value=id("v41-voice").value==="instrumental"?"none":vocals[0];
+ id("v41-choir-style").value=vocals[1];
+ if(id("v41-feedback"))id("v41-feedback").textContent="Caricati gli strumenti suggeriti per il preset. Puoi sostituire ogni strumento o selezionare «Nessuno»; i cori si impostano separatamente.";
+}
+function v41ClearInstruments(){
+ v41SetInstruments({});
+ if(id("v41-feedback"))id("v41-feedback").textContent="Strumenti azzerati. Aggiungi almeno uno strumento per generare un arrangiamento.";
+}
+function v41BuildInstrumentUI(){
+ const host=id("v41-instrument-groups");if(!host)return;
+ host.textContent="";
+ const groups=[...new Set(v41Families.map(f=>f.group))];
+ for(const groupName of groups){
+   const details=document.createElement("details");
+   details.className="v41-section-group";
+   if(groupName==="Ritmica"||groupName==="Piano e tastiere")details.open=true;
+   const summary=document.createElement("summary");summary.textContent=groupName;details.appendChild(summary);
+   const grid=document.createElement("div");grid.className="v41-instrument-grid";details.appendChild(grid);
+   for(const f of v41Families.filter(x=>x.group===groupName)){
+     const label=document.createElement("label");label.className="v41-inst-label";label.textContent=f.label;
+     const select=document.createElement("select");select.id="v41-inst-"+f.key;select.dataset.family=f.key;
+     const empty=document.createElement("option");empty.value="";empty.textContent="Nessuno";select.appendChild(empty);
+     for(const [val,display] of f.options){
+       const option=document.createElement("option");option.value=val;option.textContent=display;select.appendChild(option);
+     }
+     select.addEventListener("change",()=>v41InstrumentChanged(select));
+     label.appendChild(select);grid.appendChild(label);
+   }
+   host.appendChild(details);
+ }
+ for(const c of ["v41-preset","v41-mood","v41-energy","v41-mode","v41-voice","v41-choir","v41-choir-style"]){
+   const el=id(c);
+   if(el)el.addEventListener("change",()=>{
+     if(id("v41-results"))id("v41-results").classList.remove("visible");
+     if(c==="v41-preset"&&id("v41-feedback"))id("v41-feedback").textContent="Preset cambiato: le selezioni degli strumenti sono state conservate. Premi «Carica strumenti suggeriti» solo se desideri sostituirle.";
+     if(c==="v41-voice"&&el.value==="instrumental"){id("v41-choir").value="none";if(id("v41-feedback"))id("v41-feedback").textContent="Modalità strumentale: cori disattivati. Gli strumenti scelti restano invariati."}
+     if(c==="v41-choir"||c==="v41-voice")v41UpdateChoirUI();
+   });
+ }
+ v41LoadSuggested();
+ v41UpdateChoirUI();
+}
+function v41UpdateChoirUI(){
+ const instrumental=id("v41-voice").value==="instrumental";
+ const none=id("v41-choir").value==="none";
+ id("v41-choir").disabled=instrumental;
+ id("v41-choir-style").disabled=instrumental||none;
+}
+
 const moods={
  sensual:"silky intimate and subtly sensual",
  romantic:"warm heartfelt romantic",
@@ -4688,10 +4952,20 @@ function v41Generate(){
  const preset=id("v41-preset").value,mood=id("v41-mood").value,energy=id("v41-energy").value,voice=id("v41-voice").value,mode=id("v41-mode").value;
  const p=v41Presets[preset];
  if(!p){id("v41-feedback").textContent="Preset non valido.";return}
+ const instruments=v41InstrumentStatus("");
+ if(instruments.length>10){id("v41-feedback").textContent="Troppi strumenti: massimo 10.";return}
+ if(!instruments.length){id("v41-feedback").textContent="Seleziona almeno uno strumento (ad esempio Piano, Basso o Batteria).";id("v41-results").classList.remove("visible");return}
  const bpm=Math.max(68,Math.min(128,p.bpm+(energy==="high"?10:energy==="soft"?-10:0)));
- const styleParts=[p.genre,moods[mood],energyNotes[energy],bpm+" BPM",p.drums,p.bass,p.guitar,p.keys,voices[voice],p.arrangement,"close upfront lead vocal, defined bass and kick separation, crisp transients, controlled room reverb and natural dynamics","short resolved instrumental outro"];
- if(voice==="instrumental")styleParts[10]="clear instrument separation, natural transients and defined bass/kick pocket";
- const style=styleParts.filter(Boolean).join(", ")+".";
+ const choirType=voice==="instrumental"?"none":id("v41-choir").value;
+ const choirStyle=choirType==="none"?"":v41Choirs[choirType]+", "+v41ChoirStyles[id("v41-choir-style").value];
+ const hasDrums=instruments.some(x=>x.family==="drums");
+ const hasBass=instruments.some(x=>x.family==="bass");
+ const compact=instruments.length>6;
+ const arrangement=compact?"verses gain energy into a memorable chorus":p.arrangement;
+ const mix=voice==="instrumental"?"clear separation, natural dynamics and controlled ambience":"upfront clear lead vocal, natural dynamics, restrained ambience";
+ const spec=instruments.map(x=>x.style);
+ const style=[p.genre,moods[mood],energyNotes[energy],bpm+" BPM",...spec,voices[voice],choirStyle,arrangement,mix,(hasBass&&hasDrums?"clear kick and bass separation":"")+" short resolved outro"]
+   .filter(Boolean).join(", ").replace(/\s+/g," ").trim().replace(/,\s+short resolved outro$/,"; short resolved outro")+".";
  const lx=v41TextToLyrics(id("v41-lyrics-input").value);
  let exc=p.exclude;
  if(voice==="instrumental")exc+=", lead vocals, lyrics";
@@ -4699,13 +4973,15 @@ function v41Generate(){
  id("v41-style").value=style;
  id("v41-lyrics").value=voice==="instrumental"?"[Instrumental Intro]\n\n[Instrumental Verse]\n\n[Instrumental Chorus]\n\n[Instrumental Bridge]\n\n[Instrumental Outro]\n\n[End]":lx.text;
  id("v41-exclude").value=exc;
- id("v41-style-info").textContent=style.length+" caratteri · Variety suggerita: "+variety+" · Max Mode: OFF per il primo confronto A/B · BPM indicativo";
+ id("v41-style-info").textContent=instruments.length+"/10 strumenti · "+style.length+" caratteri · Variety suggerita: "+variety+" · BPM indicativo";
  const messages=[];
- if(style.length>850)messages.push("Style supera gli 850 caratteri (soglia indicativa dello Studio, non di Suno): valuta di accorciare qualche clausola.");
+ if(style.length>850)messages.push("Style oltre 850 caratteri (soglia interna, non limite Suno): il prompt resta completo. Riduci strumenti o descrizioni se i risultati perdono precisione.");
+ if(instruments.length>6)messages.push("Hai scelto "+instruments.length+" strumenti: ascolta se sono distinguibili, soprattutto nel ritornello.");
+ if(!hasDrums&&!hasBass)messages.push("Hai escluso batteria e basso: il groove sarà affidato agli strumenti rimasti, senza inventare una sezione ritmica nel prompt.");
  if(lx.warning&&voice!=="instrumental")messages.push(lx.warning);
- if(voice==="duet")messages.push("Duetto: inserisci [Male Vocals] e [Female Vocals] nei punti esatti dei cambi di voce.");
- if(mode==="creative")messages.push("Modalità creativa: confronta prima una prova con Variety 0; un valore maggiore potrebbe reinterpretare lo Style.");
- if(!messages.length)messages.push("Style compatto pronto. Resta da verificare con l'ascolto: groove, basso, voce, ritornello e finale.");
+ if(voice==="duet")messages.push("Duetto: usa [Male Vocals] e [Female Vocals] nei Lyrics nei punti dei cambi voce.");
+ if(mode==="creative")messages.push("Creativa: prima confronta una generazione con Variety 0.");
+ if(!messages.length)messages.push("Prompt pronto: contiene solo gli strumenti selezionati e la configurazione dei cori.");
  id("v41-feedback").textContent=messages.join(" ");
  id("v41-results").classList.add("visible");
 }
@@ -4727,7 +5003,7 @@ async function v41Copy(which){
 }
 function v41Export(){
  if(!id("v41-results").classList.contains("visible")){id("v41-feedback").textContent="Genera prima il prompt.";return}
- const obj={document:"VRicky Studio v41 experiment",version:"41.0.0-beta",date:new Date().toISOString(),source:"docs/BIBBIA_PROMPT_SUNO_V6.md",status:"DA_VERIFICARE",preset:id("v41-preset").value,mood:id("v41-mood").value,energy:id("v41-energy").value,voice:id("v41-voice").value,mode:id("v41-mode").value,style:id("v41-style").value,lyrics:id("v41-lyrics").value,exclude:id("v41-exclude").value,modelSuggested:"v6",varietySuggested:id("v41-mode").value==="precise"?0:35,maxModeSuggested:false,notes:"No audio tests performed in this export"};
+ const obj={document:"VRicky Studio v41 experiment",version:"41.1.0-beta",date:new Date().toISOString(),source:"docs/BIBBIA_PROMPT_SUNO_V6.md",status:"DA_VERIFICARE",preset:id("v41-preset").value,mood:id("v41-mood").value,energy:id("v41-energy").value,voice:id("v41-voice").value,mode:id("v41-mode").value,instruments:v41SelectedInstruments(),choir:id("v41-voice").value==="instrumental"?"none":id("v41-choir").value,choirStyle:id("v41-choir-style").value,style:id("v41-style").value,lyrics:id("v41-lyrics").value,exclude:id("v41-exclude").value,modelSuggested:"v6",varietySuggested:id("v41-mode").value==="precise"?0:35,maxModeSuggested:false,notes:"No audio tests performed in this export"};
  const blob=new Blob([JSON.stringify(obj,null,2)],{type:"application/json"});
  const u=URL.createObjectURL(blob);const a=document.createElement("a");a.href=u;a.download="vricky-v41-experiment.json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);
  id("v41-feedback").textContent="Scheda esperimento esportata; nessun dato trasmesso a un server.";
@@ -4750,13 +5026,21 @@ function v41Init(){
  for(let node=ui.nextElementSibling;node&&node!==footer;){
   const next=node.nextElementSibling;target.appendChild(node);node=next;count++;
  }
- document.title="VRicky Studio v41 — R&B Neo Soul Funk";
+ v41BuildInstrumentUI();
+ document.title="VRicky Studio v41.1 — R&B Neo Soul Funk";
  const head=document.querySelector(".container > header h1");if(head)head.textContent="VRicky Studio v41";
  const sub=document.querySelector(".container > header p");if(sub)sub.textContent="R&B · Neo Soul · Funk — beta v41, laboratorio avanzato v40 integrato";
  v41Generate();
  id("v41-results").classList.remove("visible");
  id("v41-feedback").textContent="Configura il tuo sound e incolla un testo. Nessun test v6 personale è ancora registrato.";
 }
+window.v41Families=v41Families;
+window.v41SelectedInstruments=v41SelectedInstruments;
+window.v41BuildInstrumentUI=v41BuildInstrumentUI;
+window.v41InstrumentChanged=v41InstrumentChanged;
+window.v41SetInstruments=v41SetInstruments;
+window.v41LoadSuggested=v41LoadSuggested;
+window.v41ClearInstruments=v41ClearInstruments;
 window.v41Generate=v41Generate;
 window.v41FillSchema=v41FillSchema;
 window.v41Copy=v41Copy;
