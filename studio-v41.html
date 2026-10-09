@@ -669,8 +669,8 @@ body:not(.rock-on) .rock-only{display:none!important}
 
 <section id="v41-ui" aria-label="VRicky Studio versione 41">
   <div class="v41-heading">
-    <div><h2>VRicky Studio v41</h2><p>R&amp;B · Neo Soul · Funk — meno scelte, pi&ugrave; precisione.<br>Regole basate sulla Bibbia Suno v6; le tecniche da testare restano sperimentali.</p></div>
-    <span class="v41-tag">BETA · v41.3</span>
+    <div><h2>VRicky Studio v41</h2><p>R&amp;B · Neo Soul · Funk · Future Soul — meno scelte, pi&ugrave; precisione.<br>Regole basate sulla Bibbia Suno v6; le tecniche da testare restano sperimentali.</p></div>
+    <span class="v41-tag">BETA · v41.4</span>
   </div>
   <div class="v41-grid">
     <label class="v41-field v41-span">Identit&agrave; musicale
@@ -678,6 +678,7 @@ body:not(.rock-on) .rock-only{display:none!important}
         <option value="funk">Funk R&amp;B — groove brillante e ballabile</option>
         <option value="neo">Neo Soul — caldo, intimo e profondo</option>
         <option value="dark">Dark R&amp;B / Funk — notturno e moderno</option>
+        <option value="future">Future Soul — soul elettronico, moderno e ricercato</option>
       </select>
     </label>
     <label class="v41-field">Atmosfera
@@ -4728,7 +4729,8 @@ function copyLyiResult() {
 const v41Presets={
  funk:{genre:"Contemporary R&B with bright neo-soul funk",bpm:108,arrangement:"spacious verses lifting into a danceable memorable chorus",exclude:"operatic vocals, stadium rock guitars"},
  neo:{genre:"Intimate modern neo-soul and contemporary R&B",bpm:82,arrangement:"intimate verses blooming into a wide expressive melodic chorus and reduced bridge",exclude:"aggressive trap hi-hat rolls, giant orchestral drums"},
- dark:{genre:"Nocturnal contemporary R&B rooted in syncopated funk",bpm:96,arrangement:"active verses, tense pre-chorus and open melodic hook with sparse bridge",exclude:"EDM festival drops, cinematic trailer percussion"}
+ dark:{genre:"Nocturnal contemporary R&B rooted in syncopated funk",bpm:96,arrangement:"active verses, tense pre-chorus and open melodic hook with sparse bridge",exclude:"EDM festival drops, cinematic trailer percussion"},
+ future:{genre:"Future soul with alternative R&B pocket, neo-soul harmony and tasteful electronic textures",bpm:98,arrangement:"intimate syncopated verses opening into a memorable soulful chorus with a spacious contrasting bridge",exclude:"EDM festival drops, harsh dubstep bass, robotic lead vocals, frantic trap hi-hat rolls"}
 };
 const v41Families=[
  {key:"drums",label:"Batteria",group:"Ritmica",options:[
@@ -4835,9 +4837,10 @@ const v41Families=[
 const v41Suggested={
  funk:{drums:"funk-live",bass:"finger",percussion:"tambourine",piano:"rhodes",mallets:"clavinet","electric-guitar":"muted"},
  neo:{drums:"neo-pocket",bass:"fretless",piano:"rhodes","electric-guitar":"jazz",strings:"quartet"},
- dark:{drums:"electronic",bass:"synth",synth:"dark",piano:"wurlitzer","electric-guitar":"chorus"}
+ dark:{drums:"electronic",bass:"synth",synth:"dark",piano:"wurlitzer","electric-guitar":"chorus"},
+ future:{drums:"electronic",bass:"synth",percussion:"shaker",piano:"rhodes",synth:"analog-pad","electric-guitar":"chorus"}
 };
-const v41PresetChoirs={funk:["mixed","funk"],neo:["male","soul"],dark:["female","airy"]};
+const v41PresetChoirs={funk:["mixed","funk"],neo:["male","soul"],dark:["female","airy"],future:["mixed","airy"]};
 const v41Choirs={none:"",male:"male backing vocals",female:"female backing vocals",mixed:"mixed male and female backing vocals"};
 const v41ChoirStyles={soul:"soft stacked soul harmonies entering on the chorus",funk:"tight funky call-and-response hits on the hook",gospel:"full gospel-style harmonies in the chorus",airy:"restrained airy layered harmonies behind the lead"};
 function v41SelectedInstruments(){
@@ -5195,7 +5198,7 @@ async function v41Copy(which){
 }
 function v41Export(){
  if(!id("v41-results").classList.contains("visible")){id("v41-feedback").textContent="Genera prima il prompt.";return}
- const obj={document:"VRicky Studio v41 experiment",version:"41.3.0-beta",date:new Date().toISOString(),source:"docs/BIBBIA_PROMPT_SUNO_V6.md",status:"DA_VERIFICARE",preset:id("v41-preset").value,mood:id("v41-mood").value,energy:id("v41-energy").value,voice:id("v41-voice").value,mode:id("v41-mode").value,tempoBand:id("v41-tempo-band").value,bpmTarget:Number(id("v41-bpm-target").value),bpmStatus:"DA_VERIFICARE in Suno",lyricsMode:v41LyricsMode(),lyricsOriginal:id("v41-lyrics-input").value,instruments:v41SelectedInstruments(),choir:id("v41-voice").value==="instrumental"?"none":id("v41-choir").value,choirStyle:id("v41-choir-style").value,style:id("v41-style").value,lyrics:id("v41-lyrics").value,exclude:id("v41-exclude").value,modelSuggested:"v6-mini",varietySuggested:id("v41-mode").value==="precise"?0:35,maxModeSuggested:false,notes:"No audio tests performed in this export"};
+ const obj={document:"VRicky Studio v41 experiment",version:"41.4.0-beta",date:new Date().toISOString(),source:"docs/BIBBIA_PROMPT_SUNO_V6.md",status:"DA_VERIFICARE",preset:id("v41-preset").value,mood:id("v41-mood").value,energy:id("v41-energy").value,voice:id("v41-voice").value,mode:id("v41-mode").value,tempoBand:id("v41-tempo-band").value,bpmTarget:Number(id("v41-bpm-target").value),bpmStatus:"DA_VERIFICARE in Suno",lyricsMode:v41LyricsMode(),lyricsOriginal:id("v41-lyrics-input").value,instruments:v41SelectedInstruments(),choir:id("v41-voice").value==="instrumental"?"none":id("v41-choir").value,choirStyle:id("v41-choir-style").value,style:id("v41-style").value,lyrics:id("v41-lyrics").value,exclude:id("v41-exclude").value,modelSuggested:"v6-mini",varietySuggested:id("v41-mode").value==="precise"?0:35,maxModeSuggested:false,notes:"No audio tests performed in this export"};
  const blob=new Blob([JSON.stringify(obj,null,2)],{type:"application/json"});
  const u=URL.createObjectURL(blob);const a=document.createElement("a");a.href=u;a.download="vricky-v41-experiment.json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);
  id("v41-feedback").textContent="Scheda esperimento esportata; nessun dato trasmesso a un server.";
@@ -5221,9 +5224,9 @@ function v41Init(){
  }
  v41BuildInstrumentUI();
  v41TempoInitialize();
- document.title="VRicky Studio v41.3 — R&B Neo Soul Funk";
- const head=document.querySelector(".container > header h1");if(head)head.textContent="VRicky Studio v41.3";
- const sub=document.querySelector(".container > header p");if(sub)sub.textContent="R&B · Neo Soul · Funk — beta v41.3, laboratorio avanzato v40 integrato";
+ document.title="VRicky Studio v41.4 — R&B Neo Soul Funk Future Soul";
+ const head=document.querySelector(".container > header h1");if(head)head.textContent="VRicky Studio v41.4";
+ const sub=document.querySelector(".container > header p");if(sub)sub.textContent="R&B · Neo Soul · Funk · Future Soul — beta v41.4, laboratorio avanzato v40 integrato";
  v41Generate();
  id("v41-results").classList.remove("visible");
  id("v41-feedback").textContent="Configura il tuo sound e incolla un testo. Nessun test v6 personale è ancora registrato.";
