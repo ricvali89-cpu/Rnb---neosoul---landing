@@ -677,7 +677,7 @@ body:not(.rock-on) .rock-only{display:none!important}
     </label>
     <label class="v41-field v41-span">Testo della canzone
       <textarea id="v41-lyrics-input" spellcheck="true" placeholder="[Verse 1]&#10;Scrivi qui le strofe...&#10;&#10;[Chorus]&#10;Scrivi qui il ritornello..."></textarea>
-      <span class="v41-hint">Puoi usare i tag [Verse], [Chorus], [Bridge], oppure incollare strofe separate da righe vuote. Se le sezioni sono dedotte automaticamente, controllale.</span>
+      <span class="v41-hint">Puoi usare [Verse], [Chorus], [Bridge] o intestazioni come Strofa 1, Ritornello, Ponte. Un testo senza indicazioni resta invariato: non invento la struttura.</span>
     </label>
   </div>
   <div class="v41-actions">
@@ -4659,10 +4659,30 @@ function v41TextToLyrics(src){
  if(hasTags){
    return {text:/^\s*\[End\]\s*$/im.test(text)?text:(text+"\n\n[End]"),warning:""};
  }
- const paras=text.split(/\n\s*\n+/).map(x=>x.trim()).filter(Boolean);
- const names=["Verse 1","Pre-Chorus","Chorus","Verse 2","Chorus","Bridge","Final Chorus","Outro"];
- const lyrics=paras.map((p,i)=>"["+(names[i]||"Outro")+"]\n"+p).join("\n\n");
- return {text:lyrics+"\n\n[End]",warning:"Sezioni dedotte automaticamente dalle righe vuote: controlla le etichette prima di copiare i Lyrics."};
+ const patterns=[
+  [/^(?:intro|introduzione)\s*:?\s*$/i,"Intro"],
+  [/^(?:strofa|verse)(?:\s*(\d+))?\s*:?\s*$/i,null],
+  [/^(?:pre[- ]?ritornello|pre[- ]?chorus)\s*:?\s*$/i,"Pre-Chorus"],
+  [/^(?:ritornello|chorus)\s*:?\s*$/i,"Chorus"],
+  [/^(?:post[- ]?ritornello|post[- ]?chorus)\s*:?\s*$/i,"Post-Chorus"],
+  [/^(?:ponte|bridge)\s*:?\s*$/i,"Bridge"],
+  [/^(?:ritornello finale|final chorus)\s*:?\s*$/i,"Final Chorus"],
+  [/^(?:finale|outro)\s*:?\s*$/i,"Outro"]
+ ];
+ let found=0,verseNo=0;
+ const lines=text.split("\n").map(line=>{
+   for(const [regex,label] of patterns){
+     const m=line.trim().match(regex);
+     if(m){
+       found++;
+       if(label===null){verseNo=m[1]?parseInt(m[1],10):verseNo+1;return "[Verse "+verseNo+"]"}
+       return "["+label+"]";
+     }
+   }
+   return line;
+ });
+ if(found)return {text:lines.join("\n")+"\n\n[End]",warning:"Ho convertito soltanto le intestazioni riconosciute (Strofa, Ritornello, Bridge ecc.). Controlla la suddivisione prima di copiare."};
+ return {text,warning:"Testo conservato senza modifiche: non posso distinguere con certezza strofe e ritornello dalle sole righe vuote. Aggiungi tag [Verse] e [Chorus], oppure usa '+ Schema testo' quando il campo è vuoto."};
 }
 function v41Generate(){
  const preset=id("v41-preset").value,mood=id("v41-mood").value,energy=id("v41-energy").value,voice=id("v41-voice").value,mode=id("v41-mode").value;
