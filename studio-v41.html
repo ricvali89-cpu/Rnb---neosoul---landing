@@ -4945,11 +4945,11 @@ const moods={
 
 /* v41.3 - perceived speed is independent of performance energy. Target BPM is guidance only. */
 const v41TempoBands={
- "very-slow":{label:"Molto lento",min:55,max:70,defaultBpm:64,style:"very slow unhurried 4/4 R&B ballad pulse, sparse spacious backbeat, wide rests between phrases, gentle note attacks, relaxed sustained groove, no double-time drum passages"},
- "slow":{label:"Lento",min:71,max:85,defaultBpm:78,style:"slow relaxed 4/4 neo-soul pocket, spacious drums and restrained hi-hats, laid-back bass phrasing, warm sustained melody, no sudden tempo surges"},
- "moderate":{label:"Moderato",min:86,max:100,defaultBpm:94,style:"moderate steady 4/4 midtempo R&B groove, clear unhurried backbeat, controlled syncopation and balanced rhythmic spacing"},
- "moving":{label:"Mosso",min:101,max:115,defaultBpm:108,style:"moving steady 4/4 funk-R&B groove, tight rhythmic pocket with precise syncopation, controlled forward motion"},
- "fast":{label:"Veloce",min:116,max:140,defaultBpm:124,style:"fast upbeat 4/4 contemporary funk groove, crisp driving backbeat, articulated syncopation and lively rhythmic movement"}
+ "very-slow":{label:"Molto lento",min:55,max:70,defaultBpm:64,style:"very slow 4/4 R&B pocket, sparse spacious backbeat, long rests, relaxed sustained notes, no double-time drums"},
+ "slow":{label:"Lento",min:71,max:85,defaultBpm:78,style:"slow laid-back 4/4 neo-soul pocket, sparse snare and hi-hats, roomy sustained phrases, no rushed fills"},
+ "moderate":{label:"Moderato",min:86,max:100,defaultBpm:94,style:"moderate 4/4 R&B groove, unhurried backbeat and balanced syncopation"},
+ "moving":{label:"Mosso",min:101,max:115,defaultBpm:108,style:"steady moving 4/4 funk-R&B pocket, tight drums and precise syncopation"},
+ "fast":{label:"Veloce",min:116,max:140,defaultBpm:124,style:"fast lively 4/4 funk groove, crisp driving backbeat and clean syncopation"}
 };
 let v41TempoCustomized=false;
 function v41TempoBandFromBpm(bpm){
@@ -5006,12 +5006,12 @@ function v41TempoOnGenreChanged(){
  if(match){id("v41-tempo-band").value=match;id("v41-bpm-target").value=String(configured);v41TempoDescribe()}
 }
 
-const energyNotes={soft:"soft restrained dynamics and intimate expression",medium:"balanced expressive dynamics and confident phrasing",high:"strong expressive accents, richer voicing and dynamic intensity without speeding up the pulse"};
+const energyNotes={soft:"soft intimate dynamics",medium:"balanced expressive dynamics",high:"strong expressive dynamics without speeding up the pulse"};
 const voices={
- male:"mature warm male lead, clear intimate phrasing in the verses, open soulful chorus melody and selective restrained falsetto accents",
- female:"warm expressive female lead, close natural articulation in the verses, powerful melodic chorus without theatrical belting",
- duet:"R&B male-female duet, clearly alternating verse lines and shared chorus harmonies with distinct timbral roles",
- instrumental:"instrumental arrangement, no lead singing and no lyrical vocals"
+ male:"warm male lead, intimate verses, soulful chorus and selective falsetto",
+ female:"warm female lead, natural phrasing and expressive melodic chorus",
+ duet:"male-female R&B duet, alternating verses and shared chorus harmonies",
+ instrumental:"instrumental, no singing or lyrics"
 };
 const id=x=>document.getElementById(x);
 function v41TextToLyrics(src){
@@ -5145,9 +5145,9 @@ function v41Generate(){
  const hasBass=instruments.some(x=>x.family==="bass");
  const compact=instruments.length>6;
  const arrangement=compact?"verses gain energy into a memorable chorus":p.arrangement;
- const mix=voice==="instrumental"?"clear separation, natural dynamics and controlled ambience":"upfront clear lead vocal, natural dynamics, restrained ambience";
+ const mix=voice==="instrumental"?"clear separation, natural dynamics":"upfront lead vocal, natural dynamics, restrained ambience";
  const spec=instruments.map(x=>x.style);
- const style=[p.genre,moods[mood],tempo.style,bpm+" BPM target, consistent tempo throughout",energyNotes[energy],...spec,voices[voice],choirStyle,arrangement,mix,(hasBass&&hasDrums?"clear kick and bass separation":"")+" short resolved outro"]
+ const style=[p.genre,moods[mood],tempo.style,bpm+" BPM target, consistent tempo throughout",energyNotes[energy],...spec,voices[voice],choirStyle,arrangement,mix,(hasBass&&hasDrums?"separated bass and kick":"")+" short resolved outro"]
    .filter(Boolean).join(", ").replace(/\s+/g," ").trim().replace(/,\s+short resolved outro$/,"; short resolved outro")+".";
  const lx=v41MakeLyricsPreview(id("v41-lyrics-input").value,instruments);
  let exc=p.exclude;
