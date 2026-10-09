@@ -666,7 +666,7 @@ body:not(.rock-on) .rock-only{display:none!important}
 <section id="v41-ui" aria-label="VRicky Studio versione 41">
   <div class="v41-heading">
     <div><h2>VRicky Studio v41</h2><p>R&amp;B · Neo Soul · Funk — meno scelte, pi&ugrave; precisione.<br>Regole basate sulla Bibbia Suno v6; le tecniche da testare restano sperimentali.</p></div>
-    <span class="v41-tag">BETA · v41.1</span>
+    <span class="v41-tag">BETA · v41.2</span>
   </div>
   <div class="v41-grid">
     <label class="v41-field v41-span">Identit&agrave; musicale
@@ -5073,7 +5073,7 @@ function v41Generate(){
  id("v41-lyrics").value=voice==="instrumental"&&v41LyricsMode()==="suggest"?"[Instrumental Intro]\n\n[Instrumental Verse]\n\n[Instrumental Chorus]\n\n[Instrumental Bridge]\n\n[Instrumental Outro]\n\n[End]":lx.text;
  id("v41-lyrics-report").textContent=voice==="instrumental"&&v41LyricsMode()==="suggest"?"Strumentale: struttura musicale generata senza voce, modificabile prima della copia.":lx.warning;
  id("v41-exclude").value=exc;
- id("v41-style-info").textContent=instruments.length+"/10 strumenti · "+style.length+" caratteri · Variety suggerita: "+variety+" · BPM indicativo";
+ id("v41-style-info").textContent=instruments.length+"/10 strumenti · "+style.length+" caratteri · Modello suggerito: v6-mini (prime prove gratuite) · Variety: "+variety+" · BPM indicativo";
  const messages=[];
  if(style.length>850)messages.push("Style oltre 850 caratteri (soglia interna, non limite Suno): il prompt resta completo. Riduci strumenti o descrizioni se i risultati perdono precisione.");
  if(instruments.length>6)messages.push("Hai scelto "+instruments.length+" strumenti: ascolta se sono distinguibili, soprattutto nel ritornello.");
@@ -5104,7 +5104,7 @@ async function v41Copy(which){
 }
 function v41Export(){
  if(!id("v41-results").classList.contains("visible")){id("v41-feedback").textContent="Genera prima il prompt.";return}
- const obj={document:"VRicky Studio v41 experiment",version:"41.2.0-beta",date:new Date().toISOString(),source:"docs/BIBBIA_PROMPT_SUNO_V6.md",status:"DA_VERIFICARE",preset:id("v41-preset").value,mood:id("v41-mood").value,energy:id("v41-energy").value,voice:id("v41-voice").value,mode:id("v41-mode").value,lyricsMode:v41LyricsMode(),lyricsOriginal:id("v41-lyrics-input").value,instruments:v41SelectedInstruments(),choir:id("v41-voice").value==="instrumental"?"none":id("v41-choir").value,choirStyle:id("v41-choir-style").value,style:id("v41-style").value,lyrics:id("v41-lyrics").value,exclude:id("v41-exclude").value,modelSuggested:"v6",varietySuggested:id("v41-mode").value==="precise"?0:35,maxModeSuggested:false,notes:"No audio tests performed in this export"};
+ const obj={document:"VRicky Studio v41 experiment",version:"41.2.0-beta",date:new Date().toISOString(),source:"docs/BIBBIA_PROMPT_SUNO_V6.md",status:"DA_VERIFICARE",preset:id("v41-preset").value,mood:id("v41-mood").value,energy:id("v41-energy").value,voice:id("v41-voice").value,mode:id("v41-mode").value,lyricsMode:v41LyricsMode(),lyricsOriginal:id("v41-lyrics-input").value,instruments:v41SelectedInstruments(),choir:id("v41-voice").value==="instrumental"?"none":id("v41-choir").value,choirStyle:id("v41-choir-style").value,style:id("v41-style").value,lyrics:id("v41-lyrics").value,exclude:id("v41-exclude").value,modelSuggested:"v6-mini",varietySuggested:id("v41-mode").value==="precise"?0:35,maxModeSuggested:false,notes:"No audio tests performed in this export"};
  const blob=new Blob([JSON.stringify(obj,null,2)],{type:"application/json"});
  const u=URL.createObjectURL(blob);const a=document.createElement("a");a.href=u;a.download="vricky-v41-experiment.json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);
  id("v41-feedback").textContent="Scheda esperimento esportata; nessun dato trasmesso a un server.";
@@ -5131,7 +5131,7 @@ function v41Init(){
  v41BuildInstrumentUI();
  document.title="VRicky Studio v41.2 — R&B Neo Soul Funk";
  const head=document.querySelector(".container > header h1");if(head)head.textContent="VRicky Studio v41";
- const sub=document.querySelector(".container > header p");if(sub)sub.textContent="R&B · Neo Soul · Funk — beta v41, laboratorio avanzato v40 integrato";
+ const sub=document.querySelector(".container > header p");if(sub)sub.textContent="R&B · Neo Soul · Funk — beta v41.2, laboratorio avanzato v40 integrato";
  v41Generate();
  id("v41-results").classList.remove("visible");
  id("v41-feedback").textContent="Configura il tuo sound e incolla un testo. Nessun test v6 personale è ancora registrato.";
