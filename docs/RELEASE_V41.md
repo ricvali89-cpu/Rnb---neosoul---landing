@@ -73,3 +73,19 @@ Richiesta autore: mantenere personalizzazione profonda con **massimo 10 strument
 - Il bundle HTML resta monolitico; la separazione in file sorgente è un'ottimizzazione futura.
 
 **URL Beta:** https://vricky-studio-v41-beta.vercel.app
+
+## v41.2 — Due modalità Lyrics con suggerimenti musicali
+
+**Stato:** codice DOCUMENTATO e verificato con test simulati; interpretazione Suno **DA_VERIFICARE**.
+
+- **Mantieni i miei tag (predefinito):** la copia dei Lyrics preserva ESATTAMENTE il testo inserito, compresi spazi, righe vuote e tag personalizzati; nessun [End] è aggiunto implicitamente.
+- **Suggerisci metatag musicali:** elaborazione locale deterministica (non è IA). Interpreta sezioni già taggate o intestazioni italiane; prova a riconoscere ritornelli ripetuti identici nei blocchi senza tag; se gli indizi non bastano, non inventa sezioni.
+- Per sezione propone **dinamiche, armonizzazioni e cori** secondo tipologia scelta (solo maschili / femminili / misti / nessuno), **falsetto** quando pertinente alla voce maschile e una breve **pausa strumentale** prima del ritornello finale quando sono presenti bridge e strumento melodico.
+- Conserva i tag già dettagliati dell'autore: non li sovrascrive. Non riscrive alcuna parola del testo.
+- **Anteprima Lyrics modificabile** accanto al pulsante Copia Lyrics; report riporta conteggio sezioni e suggerimenti. Input originale mantenuto separato.
+- Esportazione JSON conserva versione originale, modalità selezionata e anteprima finale.
+- Come modello di prova iniziale nella scheda export è suggerito **v6-mini**, Variety 0 in modalità Precisa. In futuro si confronterà v6 a pagamento, senza dati di test ancora acquisiti.
+- Tag del tipo [Chorus: ...], [Instrumental Break: ...] sono **ipotesi sperimentali**, non comandi con esito deterministico confermato da Suno.
+- **Test automatici (8 casi):** conservazione di tag/spazi, cori misti e falsetto, rispetto dei tag dettagliati, gestione testo senza struttura, conversione intestazioni italiane, ritornelli identici, disattivazione cori, brano strumentale. **8/8 riusciti** usando DOM simulato.
+
+Il collegamento alla landing originale v40 non è stato toccato. La Beta dedicata su Vercel distribuisce automaticamente main. Collaudo visivo Safari e generazioni audio reali ancora DA_VERIFICARE.
