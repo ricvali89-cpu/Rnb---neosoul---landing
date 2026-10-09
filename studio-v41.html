@@ -670,7 +670,7 @@ body:not(.rock-on) .rock-only{display:none!important}
 <section id="v41-ui" aria-label="VRicky Studio versione 41">
   <div class="v41-heading">
     <div><h2>VRicky Studio v41</h2><p>R&amp;B · Neo Soul · Funk · Future Soul — meno scelte, pi&ugrave; precisione.<br>Regole basate sulla Bibbia Suno v6; le tecniche da testare restano sperimentali.</p></div>
-    <span class="v41-tag">BETA · v41.4</span>
+    <span class="v41-tag">BETA · v41.5</span>
   </div>
   <div class="v41-grid">
     <label class="v41-field v41-span">Identit&agrave; musicale
@@ -680,6 +680,13 @@ body:not(.rock-on) .rock-only{display:none!important}
         <option value="dark">Dark R&amp;B / Funk — notturno e moderno</option>
         <option value="future">Future Soul — soul elettronico, moderno e ricercato</option>
       </select>
+    </label>
+    <label class="v41-field v41-span" id="v41-future-variant-wrap" style="display:none">Sotto-preset Future Soul
+      <select id="v41-future-variant">
+        <option value="base">Future Soul — base elettronica</option>
+        <option value="cinematic">Future NeoSoul Cinematic — The Past Future</option>
+      </select>
+      <span class="v41-hint">Cinematic carica esplicitamente il sound di The Past Future; dopo puoi personalizzare BPM, strumenti e voce. Non sostituisce i Lyrics.</span>
     </label>
     <label class="v41-field">Atmosfera
       <select id="v41-mood">
@@ -4730,8 +4737,10 @@ const v41Presets={
  funk:{genre:"Contemporary R&B with bright neo-soul funk",bpm:108,arrangement:"spacious verses lifting into a danceable memorable chorus",exclude:"operatic vocals, stadium rock guitars"},
  neo:{genre:"Intimate modern neo-soul and contemporary R&B",bpm:82,arrangement:"intimate verses blooming into a wide expressive melodic chorus and reduced bridge",exclude:"aggressive trap hi-hat rolls, giant orchestral drums"},
  dark:{genre:"Nocturnal contemporary R&B rooted in syncopated funk",bpm:96,arrangement:"active verses, tense pre-chorus and open melodic hook with sparse bridge",exclude:"EDM festival drops, cinematic trailer percussion"},
- future:{genre:"Future soul with alternative R&B pocket, neo-soul harmony and tasteful electronic textures",bpm:98,arrangement:"intimate syncopated verses opening into a memorable soulful chorus with a spacious contrasting bridge",exclude:"EDM festival drops, harsh dubstep bass, robotic lead vocals, frantic trap hi-hat rolls"}
+ future:{genre:"Future soul with alternative R&B pocket, neo-soul harmony and tasteful electronic textures",bpm:98,arrangement:"intimate syncopated verses opening into a memorable soulful chorus with a spacious contrasting bridge",exclude:"EDM festival drops, harsh dubstep bass, robotic lead vocals, frantic trap hi-hat rolls"},
+ "future-cinematic":{genre:"Cinematic future soul with alternative R&B pocket and neo-soul harmony, intimate warm acoustic-electric fusion",bpm:98,arrangement:"romantic intimate verses lifting into an expansive emotional melodic chorus and a resolved outro",exclude:"EDM festival drops, harsh dubstep bass, robotic lead vocals, frantic trap hi-hat rolls"}
 };
+const v41CinematicOriginalStyle="Future Soul With Alternative R&B Pocket, Neo-Soul Harmony And Tasteful Electronic Textures, Warm Heartfelt Romantic, Moderate 4/4 R&B Groove, Unhurried Backbeat And Balanced Syncopation, 98 Bpm Target, Steady Pulse, Balanced Expressive Dynamics, Modern R&B Drum Kit, Crisp Controlled Kick And Rimshot, Articulate Analog Synth-Bass Pulsing With Kick, Intimate Felt Upright Piano, Soft Warm Chords, Smooth Monophonic Synth Lead Answering Vocals, Steel-String Acoustic Guitar, Delicate Syncopated Strums, Small Orchestral Violin Section Swelling In Chorus, Warm Male Lead, Intimate Verses, Soulful Chorus And Selective Falsetto, Mixed Male And Female Backing Vocals, Restrained Airy Layered Harmonies Behind The Lead, Verses Lift Into A Melodic Chorus, Short Natural Outro.";
 const v41Families=[
  {key:"drums",label:"Batteria",group:"Ritmica",options:[
  ["funk-live","Batteria funk live","tight live funk kit, kick/snare backbeat with ghost notes"],
@@ -4838,9 +4847,10 @@ const v41Suggested={
  funk:{drums:"funk-live",bass:"finger",percussion:"tambourine",piano:"rhodes",mallets:"clavinet","electric-guitar":"muted"},
  neo:{drums:"neo-pocket",bass:"fretless",piano:"rhodes","electric-guitar":"jazz",strings:"quartet"},
  dark:{drums:"electronic",bass:"synth",synth:"dark",piano:"wurlitzer","electric-guitar":"chorus"},
- future:{drums:"electronic",bass:"synth",percussion:"shaker",piano:"rhodes",synth:"analog-pad","electric-guitar":"chorus"}
+ future:{drums:"electronic",bass:"synth",percussion:"shaker",piano:"rhodes",synth:"analog-pad","electric-guitar":"chorus"},
+ "future-cinematic":{drums:"rnb-tight",bass:"synth",piano:"upright",synth:"lead","acoustic-guitar":"steel",violin:"section"}
 };
-const v41PresetChoirs={funk:["mixed","funk"],neo:["male","soul"],dark:["female","airy"],future:["mixed","airy"]};
+const v41PresetChoirs={funk:["mixed","funk"],neo:["male","soul"],dark:["female","airy"],future:["mixed","airy"],"future-cinematic":["mixed","airy"]};
 const v41Choirs={none:"",male:"male backing vocals",female:"female backing vocals",mixed:"mixed male and female backing vocals"};
 const v41ChoirStyles={soul:"soft stacked soul harmonies entering on the chorus",funk:"tight funky call-and-response hits on the hook",gospel:"full gospel-style harmonies in the chorus",airy:"restrained airy layered harmonies behind the lead"};
 function v41SelectedInstruments(){
@@ -4881,12 +4891,38 @@ function v41SetInstruments(values){
  if(id("v41-results"))id("v41-results").classList.remove("visible");
  return selected;
 }
+function v41ActivePresetKey(){
+ return id("v41-preset").value==="future"&&id("v41-future-variant").value==="cinematic"?"future-cinematic":id("v41-preset").value;
+}
+function v41CinematicMatches(instruments,mood,energy,voice,bpm,choirType){
+ if(v41ActivePresetKey()!=="future-cinematic"||mood!=="romantic"||energy!=="medium"||voice!=="male"||bpm!==98||choirType!=="mixed"||id("v41-choir-style").value!=="airy")return false;
+ if(instruments.length!==6||id("v41-tempo-band").value!=="moderate")return false;
+ const expected=v41Suggested["future-cinematic"];
+ return instruments.every(x=>expected[x.family]===x.variant);
+}
+function v41RefreshFutureVariantUI(){
+ const visible=id("v41-preset").value==="future";
+ id("v41-future-variant-wrap").style.display=visible?"":"none";
+ if(!visible)id("v41-future-variant").value="base";
+}
+function v41ApplyFutureVariant(){
+ if(id("v41-future-variant").value==="cinematic"&&id("v41-preset").value==="future"){
+  id("v41-mood").value="romantic";id("v41-energy").value="medium";id("v41-voice").value="male";
+  id("v41-tempo-band").value="moderate";id("v41-bpm-target").value="98";v41TempoCustomized=true;v41TempoDescribe();
+  v41LoadSuggested();v41UpdateChoirUI();
+  id("v41-feedback").textContent="Future NeoSoul Cinematic: caricata la configurazione di The Past Future (98 BPM, sei strumenti, voce maschile, cori misti). La persona vocale VRicky va selezionata in Suno. Ogni valore resta modificabile.";
+ }else if(id("v41-feedback")){
+  id("v41-feedback").textContent="Future Soul base selezionato: conservate le impostazioni correnti. Usa «Carica strumenti suggeriti» se vuoi cambiare arrangiamento.";
+ }
+ if(id("v41-results"))id("v41-results").classList.remove("visible");
+}
 function v41LoadSuggested(){
- const k=id("v41-preset").value;
+ const k=v41ActivePresetKey();
  v41SetInstruments(v41Suggested[k]||{});
  const vocals=v41PresetChoirs[k]||["none","soul"];
  id("v41-choir").value=id("v41-voice").value==="instrumental"?"none":vocals[0];
  id("v41-choir-style").value=vocals[1];
+ v41UpdateChoirUI();
  if(id("v41-feedback"))id("v41-feedback").textContent="Caricati gli strumenti suggeriti per il preset. Puoi sostituire ogni strumento o selezionare «Nessuno»; i cori si impostano separatamente.";
 }
 function v41ClearInstruments(){
@@ -4919,11 +4955,13 @@ function v41BuildInstrumentUI(){
    const el=id(c);
    if(el)el.addEventListener("change",()=>{
      if(id("v41-results"))id("v41-results").classList.remove("visible");
-     if(c==="v41-preset"){v41TempoOnGenreChanged();if(id("v41-feedback"))id("v41-feedback").textContent="Preset cambiato: strumenti e BPM personalizzati conservati. Carica suggerimenti solo se vuoi modificare gli strumenti.";}
+     if(c==="v41-preset"){v41RefreshFutureVariantUI();v41TempoOnGenreChanged();if(id("v41-feedback"))id("v41-feedback").textContent="Preset cambiato: strumenti e BPM personalizzati conservati. Carica suggerimenti solo se vuoi modificare gli strumenti.";}
      if(c==="v41-voice"&&el.value==="instrumental"){id("v41-choir").value="none";if(id("v41-feedback"))id("v41-feedback").textContent="Modalità strumentale: cori disattivati. Gli strumenti scelti restano invariati."}
      if(c==="v41-choir"||c==="v41-voice")v41UpdateChoirUI();
    });
  }
+ id("v41-future-variant").addEventListener("change",v41ApplyFutureVariant);
+ v41RefreshFutureVariantUI();
  document.querySelectorAll('input[name="v41-lyrics-mode"]').forEach(r=>r.addEventListener("change",()=>{
    if(id("v41-results"))id("v41-results").classList.remove("visible");
    if(id("v41-feedback"))id("v41-feedback").textContent=r.value==="keep"?"Mantieni i miei tag: verranno preservati integralmente.":"Suggerimenti musicali: usa Genera per creare l'anteprima, poi rivedila.";
@@ -5133,7 +5171,7 @@ function v41MakeLyricsPreview(raw,instruments){
 }
 
 function v41Generate(){
- const preset=id("v41-preset").value,mood=id("v41-mood").value,energy=id("v41-energy").value,voice=id("v41-voice").value,mode=id("v41-mode").value;
+ const preset=v41ActivePresetKey(),mood=id("v41-mood").value,energy=id("v41-energy").value,voice=id("v41-voice").value,mode=id("v41-mode").value;
  const p=v41Presets[preset];
  if(!p){id("v41-feedback").textContent="Preset non valido.";return}
  const instruments=v41InstrumentStatus("");
@@ -5156,6 +5194,8 @@ function v41Generate(){
  if(style.length>850&&instruments.length<=6){
    style=[p.genre,moods[mood],tempo.style,bpm+" BPM target, steady pulse",energyNotes[energy],...spec,voices[voice],choirStyle,"verses lift into a melodic chorus","short natural outro"].filter(Boolean).join(", ")+".";
  }
+ // The canonical configuration must reproduce the actual The Past Future Style exactly. Edited settings use the flexible generator instead.
+ if(v41CinematicMatches(instruments,mood,energy,voice,bpm,choirType))style=v41CinematicOriginalStyle;
  const lx=v41MakeLyricsPreview(id("v41-lyrics-input").value,instruments);
  let exc=p.exclude;
  if(voice==="instrumental")exc+=", lead vocals, lyrics";
@@ -5198,7 +5238,7 @@ async function v41Copy(which){
 }
 function v41Export(){
  if(!id("v41-results").classList.contains("visible")){id("v41-feedback").textContent="Genera prima il prompt.";return}
- const obj={document:"VRicky Studio v41 experiment",version:"41.4.0-beta",date:new Date().toISOString(),source:"docs/BIBBIA_PROMPT_SUNO_V6.md",status:"DA_VERIFICARE",preset:id("v41-preset").value,mood:id("v41-mood").value,energy:id("v41-energy").value,voice:id("v41-voice").value,mode:id("v41-mode").value,tempoBand:id("v41-tempo-band").value,bpmTarget:Number(id("v41-bpm-target").value),bpmStatus:"DA_VERIFICARE in Suno",lyricsMode:v41LyricsMode(),lyricsOriginal:id("v41-lyrics-input").value,instruments:v41SelectedInstruments(),choir:id("v41-voice").value==="instrumental"?"none":id("v41-choir").value,choirStyle:id("v41-choir-style").value,style:id("v41-style").value,lyrics:id("v41-lyrics").value,exclude:id("v41-exclude").value,modelSuggested:"v6-mini",varietySuggested:id("v41-mode").value==="precise"?0:35,maxModeSuggested:false,notes:"No audio tests performed in this export"};
+ const obj={document:"VRicky Studio v41 experiment",version:"41.5.0-beta",date:new Date().toISOString(),source:"docs/BIBBIA_PROMPT_SUNO_V6.md",status:"DA_VERIFICARE",preset:id("v41-preset").value,subpreset:id("v41-preset").value==="future"?id("v41-future-variant").value:"none",effectivePreset:v41ActivePresetKey(),mood:id("v41-mood").value,energy:id("v41-energy").value,voice:id("v41-voice").value,mode:id("v41-mode").value,tempoBand:id("v41-tempo-band").value,bpmTarget:Number(id("v41-bpm-target").value),bpmStatus:"DA_VERIFICARE in Suno",lyricsMode:v41LyricsMode(),lyricsOriginal:id("v41-lyrics-input").value,instruments:v41SelectedInstruments(),choir:id("v41-voice").value==="instrumental"?"none":id("v41-choir").value,choirStyle:id("v41-choir-style").value,style:id("v41-style").value,lyrics:id("v41-lyrics").value,exclude:id("v41-exclude").value,modelSuggested:"v6-mini",varietySuggested:id("v41-mode").value==="precise"?0:35,maxModeSuggested:false,notes:"No audio tests performed in this export"};
  const blob=new Blob([JSON.stringify(obj,null,2)],{type:"application/json"});
  const u=URL.createObjectURL(blob);const a=document.createElement("a");a.href=u;a.download="vricky-v41-experiment.json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);
  id("v41-feedback").textContent="Scheda esperimento esportata; nessun dato trasmesso a un server.";
@@ -5224,15 +5264,19 @@ function v41Init(){
  }
  v41BuildInstrumentUI();
  v41TempoInitialize();
- document.title="VRicky Studio v41.4 — R&B Neo Soul Funk Future Soul";
- const head=document.querySelector(".container > header h1");if(head)head.textContent="VRicky Studio v41.4";
- const sub=document.querySelector(".container > header p");if(sub)sub.textContent="R&B · Neo Soul · Funk · Future Soul — beta v41.4, laboratorio avanzato v40 integrato";
+ document.title="VRicky Studio v41.5 — R&B Neo Soul Funk Future Soul";
+ const head=document.querySelector(".container > header h1");if(head)head.textContent="VRicky Studio v41.5";
+ const sub=document.querySelector(".container > header p");if(sub)sub.textContent="R&B · Neo Soul · Funk · Future Soul — beta v41.5, laboratorio avanzato v40 integrato";
  v41Generate();
  id("v41-results").classList.remove("visible");
- id("v41-feedback").textContent="Configura il tuo sound e incolla un testo. Nessun test v6 personale è ancora registrato.";
+ id("v41-feedback").textContent="Configura il tuo sound e incolla un testo. The Past Future è il riferimento artistico Future Soul: gli altri risultati sono da verificare in Suno.";
 }
 window.v41Families=v41Families;
 window.v41SelectedInstruments=v41SelectedInstruments;
+window.v41ActivePresetKey=v41ActivePresetKey;
+window.v41CinematicOriginalStyle=v41CinematicOriginalStyle;
+window.v41RefreshFutureVariantUI=v41RefreshFutureVariantUI;
+window.v41ApplyFutureVariant=v41ApplyFutureVariant;
 window.v41BuildInstrumentUI=v41BuildInstrumentUI;
 window.v41InstrumentChanged=v41InstrumentChanged;
 window.v41SetInstruments=v41SetInstruments;
