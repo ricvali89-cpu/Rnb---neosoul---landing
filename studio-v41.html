@@ -660,7 +660,7 @@ body:not(.rock-on) .rock-only{display:none!important}
 <section id="v41-ui" aria-label="VRicky Studio versione 41">
   <div class="v41-heading">
     <div><h2>VRicky Studio v41</h2><p>R&amp;B · Neo Soul · Funk — meno scelte, pi&ugrave; precisione.<br>Regole basate sulla Bibbia Suno v6; le tecniche da testare restano sperimentali.</p></div>
-    <span class="v41-tag">BETA · v41</span>
+    <span class="v41-tag">BETA · v41.1</span>
   </div>
   <div class="v41-grid">
     <label class="v41-field v41-span">Identit&agrave; musicale
@@ -4695,11 +4695,10 @@ function copyLyiResult() {
 (function(){
 "use strict";
 const v41Presets={
-  funk:{genre:"Contemporary R&B with bright neo-soul funk",bpm:108,drums:"tight live-feel kick and snare backbeat, light snare ghost notes and restrained hi-hats",bass:"melodic warm electric bass locking with the kick and playing short syncopated fills",guitar:"clean muted funk guitar chopping sixteenth-note offbeats",keys:"Rhodes comping warm seventh and ninth chords in the spaces",arrangement:"spacious conversational verses opening into a danceable full-band chorus with call-and-response backing harmonies",exclude:"operatic vocals, stadium rock guitars"},
-  neo:{genre:"Intimate modern neo-soul and contemporary R&B",bpm:82,drums:"unhurried laid-back pocket, soft snare ghost notes and clean restrained kick",bass:"rounded electric bass answering the vocal in melodic phrases",guitar:"sparse clean guitar replies in the vocal gaps",keys:"warm Rhodes sustaining extended jazzy chords with room for breaths",arrangement:"minimal intimate verses blooming into a rich harmonized chorus, a reduced bridge, then a final dynamic lift",exclude:"aggressive trap hi-hat rolls, giant orchestral drums"},
-  dark:{genre:"Nocturnal contemporary R&B rooted in syncopated funk",bpm:96,drums:"dry punchy backbeat, concise ghost notes and steady danceable pocket",bass:"articulate warm synth bass locking to the kick without overpowering it",guitar:"clean syncopated guitar stabs answering the lead between lines",keys:"muted analog synth chords supported by sparse Rhodes accents",arrangement:"rhythmically active verses, brief tension-building pre-chorus, wide memorable chorus and sparse bridge",exclude:"EDM festival drops, cinematic trailer percussion"}
+ funk:{genre:"Contemporary R&B with bright neo-soul funk",bpm:108,arrangement:"spacious verses lifting into a danceable memorable chorus",exclude:"operatic vocals, stadium rock guitars"},
+ neo:{genre:"Intimate modern neo-soul and contemporary R&B",bpm:82,arrangement:"intimate verses blooming into a wide expressive melodic chorus and reduced bridge",exclude:"aggressive trap hi-hat rolls, giant orchestral drums"},
+ dark:{genre:"Nocturnal contemporary R&B rooted in syncopated funk",bpm:96,arrangement:"active verses, tense pre-chorus and open melodic hook with sparse bridge",exclude:"EDM festival drops, cinematic trailer percussion"}
 };
-
 const v41Families=[
  {key:"drums",label:"Batteria",group:"Ritmica",options:[
  ["funk-live","Batteria funk live","tight live funk kit, kick/snare backbeat with ghost notes"],
