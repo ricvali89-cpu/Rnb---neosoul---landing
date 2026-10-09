@@ -1,6 +1,6 @@
 # BIBBIA PROMPT SUNO v6 — VRicky R&B · Neo Soul · Funk
 
-**Versione documento:** 1.2.0 — 09/10/2026  
+**Versione documento:** 1.3.0 — 09/10/2026  
 **Stato:** BASE DOCUMENTATA / REGISTRO SPERIMENTALE APERTO  
 **Repository:** ricvali89-cpu/Rnb---neosoul---landing (main)  
 **Tool di partenza:** R&B Neo Soul Studio v40, codice incorporato in index.html  
@@ -26,7 +26,8 @@
 13. Registro esperimenti VRicky
 14. Fonti e data di consultazione
 15. Protocollo Lyrics v41.2
-16. Changelog
+16. BPM e controllo tempo
+17. Changelog
 
 ## 1. Identità artistica: non cambiare genere per inseguire gli hack
 
@@ -430,8 +431,23 @@ Ogni nuova tecnica deve avere una scheda:
 5. Non segnare «SUCCESSO» senza misurazione/ascolto. Annotare numero richiesto, numero misurato, stabilità e preferenza di groove.
 6. Se serve BPM **esatto** per mix, registrazione o video, valutare correzione audio in un editor/DAW (es. Manual Tempo in Suno Studio se accessibile) e controllare artefatti di time stretching.
 
-**Stato:** DOCUMENTATO il funzionamento di Studio e Sounds; **DA_VERIFICARE** l'efficacia dei prompt BPM VRicky su v6-mini. Il generatore v41.2 utilizza BPM indicativi derivati da preset/energia: non trasformarli in lock garantiti. In futuro, un BPM manuale sarà un **obiettivo personalizzabile**, non un «BPM forzato».
+**Stato:** DOCUMENTATO il funzionamento di Studio e Sounds, DA_VERIFICARE l'efficacia dei prompt BPM su v6-mini. **STORICO / SUPERATO:** v41.2 derivava BPM da preset/energia. Studio v41.3 separa energia e velocità, con obiettivo BPM manuale, senza pretendere un lock metronomico.
 
+### Implementazione Studio v41.3: cinque fasce e BPM manuali
+
+| Etichetta rapida | Fascia indicativa | BPM rapido | Tempo percepito |
+|---|---:|---:|---|
+| Molto lento | 55–70 | 64 | 4/4 spazioso, senza double-time |
+| Lento | 71–85 | 78 | Neo Soul morbido, non affrettato |
+| Moderato | 86–100 | 94 | R&B midtempo bilanciato |
+| Mosso | 101–115 | 108 | Funk/R&B ritmico e sincopato |
+| Veloce | 116–140 | 124 | Groove brillante dal backbeat rapido |
+
+Intervalli **DICHIARATI come convenzioni creative VRicky**, non classificazione ufficiale Suno. Nel motore v41.3 il campo manuale accetta interi 55–140 e aggiorna la fascia, senza arrotondamenti nascosti. I default iniziali di genere sono Funk 108, Neo Soul 82 e Dark 96; dopo scelta manuale si conservano anche cambiando genere.
+
+**Regola:** energia modifica intensità/dinamica senza aumentare il BPM. Tempo <=85 inserisce groove disteso nello Style ed esclusioni per ska, double-time e ritmi affrettati. I sottotipi strumentali scelti rimangono invariati, con avviso in caso di batteria disco associata a tempo lento.
+
+**Test funzionali DOCUMENTATI:** 45/45 combinazioni genere × fascia × energia corrette, Style proposti 705–850 caratteri; test audio v6-mini e Safari ancora DA_VERIFICARE. Il BPM resta un **obiettivo** e non un tempo garantito.
 ### Fonti — consultate 09/10/2026
 - [B1] Suno Help, *Transport controls in Studio*: https://help.suno.com/en/articles/8121281
 - [B2] Suno Help, *Introducing Suno Studio 1.2*: https://help.suno.com/en/articles/10625089
@@ -442,6 +458,7 @@ Ogni nuova tecnica deve avere una scheda:
 
 ## 17. Changelog
 
+- **1.3.0 — 09/10/2026:** supporto alle cinque fasce di velocità, BPM target manuale e indipendenza dell'energia in v41.3.
 - **1.2.0 — 09/10/2026:** integrazione fonti ufficiali BPM, distinzione prompt/DAW/Sounds e protocollo test v6-mini.
 - **1.1.0 — 09/10/2026:** integrato protocollo doppia modalità Lyrics v41.2, report editor, suggerimenti musicali sperimentali e piano test gratuito v6-mini.
 - **1.0.0 — 09/10/2026:** Bibbia iniziale, ricerca ufficiale + esperienze Reddit + singolo test audio indipendente, archetipi VRicky e metodologia A/B; nessuna generazione v6 o modifica al generatore HTML. Priorità di test: funk e Variety 0.
