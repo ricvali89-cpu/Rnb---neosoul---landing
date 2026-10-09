@@ -1,6 +1,6 @@
 # BIBBIA PROMPT SUNO v6 — VRicky R&B · Neo Soul · Funk
 
-**Versione documento:** 1.1.0 — 09/10/2026  
+**Versione documento:** 1.2.0 — 09/10/2026  
 **Stato:** BASE DOCUMENTATA / REGISTRO SPERIMENTALE APERTO  
 **Repository:** ricvali89-cpu/Rnb---neosoul---landing (main)  
 **Tool di partenza:** R&B Neo Soul Studio v40, codice incorporato in index.html  
@@ -408,7 +408,40 @@ Ogni nuova tecnica deve avere una scheda:
 
 - [R2] Codice v41.2: https://github.com/ricvali89-cpu/Rnb---neosoul---landing/blob/main/studio-v41.html
 
-## 16. Changelog
+## 16. BPM e controllo tempo — aggiornamento 09/10/2026
 
+**Conclusione:** non è DOCUMENTATO un parametro della generazione di **canzoni intere con v6-mini** che garantisca un BPM numerico esatto usando soltanto lo Style. Scrivere «96 BPM» è un'istruzione musicale, non un metronomo vincolante.
+
+### Distinguere tre funzioni ufficiali
+- **Canzone generata da prompt v6/v6-mini:** Suno documenta migliore comprensione di linguaggio, strumenti e struttura ma non certifica che il BPM testuale sia rispettato al numero esatto. Fonte [S1].
+- **Suno Studio (DAW, Premier):** Project Tempo → Manual Tempo consente di impostare il BPM della timeline e adattare le regioni audio al tempo del progetto. Follow Track, metronomo e Warp Markers servono a gestire/correggere il tempo. È **editing del risultato**, non una garanzia della generazione iniziale. Fonti [B1], [B2], [B3].
+- **Suno Sounds → Loop:** è documentata un'impostazione numerica BPM per il **loop/campione**, non per la generazione della canzone completa. Funzioni e accesso dipendono dal piano e vanno verificati nell'interfaccia. Fonte [B4].
+
+### Prove e segnalazioni esterne
+- Un utente riferisce di aver usato una demo con metronomo 129 BPM, impostazione «Fixed Tempo» e alta influenza audio, ottenendo un risultato a circa 130 BPM con drift: prova aneddotica, NON test controllato né esito universale [B5].
+- Altri utenti v6 riferiscono mancata aderenza ai BPM, mentre alcuni hanno risultati migliori con istruzioni di arrangiamento dettagliate. Non dedurre una precisione percentuale senza dati. Fonte [B6].
+- È possibile un errore di classificazione metà/doppio tempo: una traccia dal feel half-time può essere etichettata 48, 96 o 192 BPM da diversi beat tracker; non confondere «sensazione» con BPM metronomico.
+
+### Protocollo VRicky da usare nei primi test v6-mini
+1. **Obiettivo**: indicare BPM + feel, non forzatura: «96 BPM, steady 4/4 neo-soul funk pocket, tight kick and snare backbeat, syncopated electric bass locked to the kick, clean sixteenth-note funk guitar chops, consistent rhythmic pulse.»
+2. Generare 2 campioni con numero BPM e ruoli strumentali; mantenere invariati testo, strumenti e slider.
+3. Generare 2 campioni togliendo **solo** il numero BPM ma conservando il resto del prompt; confrontare senza alterare le altre variabili.
+4. Ascoltare e, se possibile, stimare il BPM reale con beat detector/DAW; verificare la griglia su più punti della traccia, distinguere metà/doppio tempo e segnalare drift.
+5. Non segnare «SUCCESSO» senza misurazione/ascolto. Annotare numero richiesto, numero misurato, stabilità e preferenza di groove.
+6. Se serve BPM **esatto** per mix, registrazione o video, valutare correzione audio in un editor/DAW (es. Manual Tempo in Suno Studio se accessibile) e controllare artefatti di time stretching.
+
+**Stato:** DOCUMENTATO il funzionamento di Studio e Sounds; **DA_VERIFICARE** l'efficacia dei prompt BPM VRicky su v6-mini. Il generatore v41.2 utilizza BPM indicativi derivati da preset/energia: non trasformarli in lock garantiti. In futuro, un BPM manuale sarà un **obiettivo personalizzabile**, non un «BPM forzato».
+
+### Fonti — consultate 09/10/2026
+- [B1] Suno Help, *Transport controls in Studio*: https://help.suno.com/en/articles/8121281
+- [B2] Suno Help, *Introducing Suno Studio 1.2*: https://help.suno.com/en/articles/10625089
+- [B3] Suno, *Introducing Suno Studio*: https://blog.suno.com/blog/suno-studio
+- [B4] Suno Help, *Suno Sounds*: https://help.suno.com/en/articles/10625537
+- [B5] Reddit, *Why can't it follow a simple metronome?*: https://www.reddit.com/r/SunoAI/comments/1wqjv5w/why_cant_it_follow_a_simple_metronome/
+- [B6] Reddit, *v6 feels like a massive downgrade*: https://www.reddit.com/r/SunoAI/comments/1wbzbaj/suno_v6_feels_like_a_massive_downgrade_very/
+
+## 17. Changelog
+
+- **1.2.0 — 09/10/2026:** integrazione fonti ufficiali BPM, distinzione prompt/DAW/Sounds e protocollo test v6-mini.
 - **1.1.0 — 09/10/2026:** integrato protocollo doppia modalità Lyrics v41.2, report editor, suggerimenti musicali sperimentali e piano test gratuito v6-mini.
 - **1.0.0 — 09/10/2026:** Bibbia iniziale, ricerca ufficiale + esperienze Reddit + singolo test audio indipendente, archetipi VRicky e metodologia A/B; nessuna generazione v6 o modifica al generatore HTML. Priorità di test: funk e Variety 0.
