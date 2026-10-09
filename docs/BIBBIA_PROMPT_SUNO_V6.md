@@ -1,6 +1,6 @@
 # BIBBIA PROMPT SUNO v6 — VRicky R&B · Neo Soul · Funk
 
-**Versione documento:** 1.4.0 — 10/10/2026  
+**Versione documento:** 1.5.0 — 10/10/2026  
 **Stato:** BASE DOCUMENTATA / REGISTRO SPERIMENTALE APERTO  
 **Repository:** ricvali89-cpu/Rnb---neosoul---landing (main)  
 **Tool di partenza:** R&B Neo Soul Studio v40, codice incorporato in index.html  
@@ -51,6 +51,7 @@ Future Soul With Alternative R&B Pocket, Neo-Soul Harmony And Tasteful Electroni
 - **Variabili da adattare al testo:** BPM (98 è solo il target del singolo esperimento), intensità, groove, tonalità, strumenti singoli (anche piano/archi/chitarra possono essere omessi), sfumature romantiche, malinconiche o energiche. Non aggiungere instruments non selezionati né rendere tutti i brani uguali.
 - **DICHIARATO:** l'autore giudica la resa di *The Past Future* «super bene» ed esprime forte preferenza per lo Style completo; **DOCUMENTATO:** file audio MP3 recuperato su Drive e misure tecniche registrate nel registro Notion; **DA_VERIFICARE:** esito di ascolti professionali comparativi, generalizzabilità dello Style su testi diversi, piena conformità degli strumenti richiesti e valori BPM in nuove generazioni.
 - **Metodo:** riutilizzare Lyrics e persona vocale quando appropriato, personalizzare lo Style per ciascuna canzone, conservare originale e varianti, valutare quale versione serve meglio la canzone. Non si assume disponibilità di Remix nel piano base.
+- **DOCUMENTATO v41.5, sotto-preset:** in VRicky Studio selezionare `Future Soul` → `Future NeoSoul Cinematic — The Past Future`. Selezionando la variante si caricano su richiesta batteria R&B moderna, synth bass, piano verticale felt, synth lead, chitarra steel-string, violini in sezione, voce maschile, cori misti eterei, mood romantico, energia media e 98 BPM target. Con queste scelte invarianti il generatore restituisce **lo Style originale sopra, lettera per lettera**; se si modificano impostazioni/strumenti genera invece uno Style adattato, senza imporre violini, synth o cori disabilitati. I Lyrics sono preservati. Lo Style è riproducibile, non l'audio: due generazioni Suno possono differire anche con prompt identico. I preset precedenti rimangono invariati. Test tecnici DOM simulato riusciti; browser iPhone e nuovi risultati audio **DA_VERIFICARE**.
 
 ## 2. Cosa è ufficialmente documentato su v6
 
@@ -473,6 +474,7 @@ Intervalli **DICHIARATI come convenzioni creative VRicky**, non classificazione 
 
 ## 17. Changelog
 
+- **1.5.0 — 10/10/2026:** introdotto il sotto-preset effettivo **Future NeoSoul Cinematic — The Past Future** in Studio v41.5: richiamo fedele Style originale, selezione coerente dei sei strumenti e controlli adattabili, QA JavaScript/DOM simulato riuscito; Safari e nuove generazioni Suno DA_VERIFICARE.
 - **1.4.0 — 10/10/2026:** Future Soul romantico/cinematografico indicato dall'autore come nuova firma sonora preferita per le prossime canzoni; conservato Style originale di *The Past Future* e introdotte regole per adattarlo a ogni brano senza omologazione. Efficacia su più brani DA_VERIFICARE.
 - **1.3.0 — 09/10/2026:** supporto alle cinque fasce di velocità, BPM target manuale e indipendenza dell'energia in v41.3.
 - **1.2.0 — 09/10/2026:** integrazione fonti ufficiali BPM, distinzione prompt/DAW/Sounds e protocollo test v6-mini.
