@@ -124,3 +124,17 @@ Il collegamento alla landing originale v40 non è stato toccato. La Beta dedicat
 - **Versione beta:** UI, titolo ed export JSON passano a v41.4.0-beta; la landing v40 in `index.html` non cambia.
 - **Smoke test tecnico:** compilazione JavaScript OK, quattro preset con sei strumenti simulati e Lyrics fedeli all'input generano Style/Exclude senza errori. Style test Future Soul 743 caratteri e sotto soglia interna 850. Test reale Safari e ascolto Suno **DA_VERIFICARE**.
 - **Prossima prova:** confrontare Future Soul e Neo Soul sullo stesso testo e sugli stessi strumenti, con due generazioni per variante, registrando prompt, genere, groove, resa vocale e hook nella roadmap.
+
+## v41.5 — Future NeoSoul Cinematic, sotto-preset Future Soul (10/10/2026)
+
+**DICHIARATO:** dopo *The Past Future* l'autore vuole usare quel Future Soul cinematografico come riferimento ricorrente senza perdere la possibilità di modificare arrangiamento per ogni canzone.
+
+**DOCUMENTATO nel codice `studio-v41.html`:**
+- Nel selettore identità scegliendo **Future Soul** compare un secondo selettore **Sotto-preset Future Soul**, con due varianti: **Future Soul — base elettronica** e **Future NeoSoul Cinematic — The Past Future**. Negli altri generi il selettore è nascosto e torna a «base»; il cambio di genere non modifica gli strumenti già scelti.
+- Scegliendo **Future NeoSoul Cinematic** vengono caricati esplicitamente sei strumenti che corrispondono a quelli del prompt reale: batteria R&B moderna, synth bass analogico, piano verticale felt, synth lead, chitarra acustica steel-string, sezione di violini. Mood romantico, energia media, voce maschile, cori misti eterei e BPM target 98.
+- Se il set di parametri rimane identico a quello dell'originale, **Style riprodotto carattere per carattere** dal documento canonico [Bibbia v6 v1.5.0](BIBBIA_PROMPT_SUNO_V6.md). Cambiando BPM, mood, voce, energia, cori o strumenti, torna la generazione parametrica senza strumenti non scelti. Il campo Lyrics e i suoi metatag restano invariati in modalità fedele. Il brano Suno può essere diverso anche con prompt identico.
+- L'esportazione JSON passa a `41.5.0-beta` e registra `preset`, `subpreset`, `effectivePreset` per esperimenti riproducibili. Non modifica la landing `index.html` e non richiede nuovi servizi o piani.
+
+**QA eseguito:** sintassi JavaScript valida; test simulati per visibilità sottopreset, tutti e sei gli strumenti, Style originale identico (770 caratteri), variazione BPM a 105, rimozione violini, ritorno a Future Soul base, cambi di genere, preservazione Lyrics, assenza errori e assenza regressioni Funk R&B; **collaudo Safari iPhone e qualità del suono su altre tracce DA_VERIFICARE**.
+
+**Riferimento artistico:** [The Past Future — MP3 originale su Drive](https://drive.google.com/file/d/1H0XwDeCvkUO3ROIRMDXh4OL6DdanZacT/view?usp=drivesdk). Non pubblicare il file senza decisione dell'autore.
