@@ -1,6 +1,6 @@
 # BIBBIA PROMPT SUNO v6 — VRicky R&B · Neo Soul · Funk
 
-**Versione documento:** 1.0.0 — 09/10/2026  
+**Versione documento:** 1.1.0 — 09/10/2026  
 **Stato:** BASE DOCUMENTATA / REGISTRO SPERIMENTALE APERTO  
 **Repository:** ricvali89-cpu/Rnb---neosoul---landing (main)  
 **Tool di partenza:** R&B Neo Soul Studio v40, codice incorporato in index.html  
@@ -389,6 +389,25 @@ Ogni nuova tecnica deve avere una scheda:
 - Guide scritte per v4.5/v5.5 non diventano automaticamente vere per v6.
 - Facebook: nessuna prova con metodi e output identificabili reperita nella ricerca pubblica odierna.
 
+
+## 16. Protocollo editor Lyrics v41.2 (nuove regole editoriali)
+
+**DICHIARATO dall'autore:** il generatore deve proporre un lavoro musicale più approfondito sul testo: riconoscimento sezioni, cori maschili/femminili, armonizzazioni, pause, falsetto e variazioni d'energia secondo testo e strumenti scelti, senza perdere il controllo autoriale.
+
+**Implementazione DOCUMENTATA nel codice [R2]:**
+- Modalità **Mantieni i miei tag**: testo e metatag vengono restituiti esattamente come forniti. È la modalità conservativa per l'A/B baseline.
+- Modalità **Suggerisci metatag musicali**: vengono lette le sezioni esplicite [Verse], [Chorus], [Pre-Chorus], [Bridge], [Final Chorus], [Intro], [Outro] oppure intestazioni italiane. Il riconoscimento da blocchi non etichettati avviene soltanto quando una strofa è ripetuta identica, con avviso di **inferenza DA_VERIFICARE**.
+- Ogni sezione ottiene una proposta concisa di dinamica/interpretazione. Il tipo di cori deriva esclusivamente dalla scelta dell'utente; **Nessuno** equivale a non chiedere cori. Il falsetto può comparire come proposta sul ritornello per voce maschile; non viene attribuito automaticamente a voce femminile. Una sola pausa strumentale suggerita tra Bridge e Final Chorus quando esiste uno strumento melodico selezionato.
+- I metatag già descrittivi dell'autore hanno precedenza; il testo cantato non viene riscritto.
+- L'anteprima è modificabile prima di Copia; il sorgente originale resta immutato.
+- Si tratta di regole JavaScript **non di analisi IA del significato profondo né di analisi audio**; identificazione semantica limitata ad alcune parole chiave. La compatibilità Suno v6-mini di parentesi descrittive e pause richiede test A/B audio reali, perciò i risultati rimangono **DA_VERIFICARE**.
+- Per i primi test usare **v6-mini** come scelta gratuita dichiarata, modalità Precisa e Variety 0 se disponibile; v6 Pro da provare successivamente. Non inferire che il comportamento sia identico fra i modelli.
+
+**Prima prova consigliata:** incollare la stessa canzone con tag espliciti; generare A mantenendo i propri tag e B con suggerimenti, lasciando invariati tutti gli strumenti e gli slider. Ascoltare due generazioni per ciascuna variante; confrontare presenza di cori, intelligibilità delle parole, cambi d'energia, pausa strumentale, interpretazione del falsetto e naturalezza. Documentare le anomalie per sezione.
+
+- [R2] Codice v41.2: https://github.com/ricvali89-cpu/Rnb---neosoul---landing/blob/main/studio-v41.html
+
 ## 15. Changelog
 
+- **1.1.0 — 09/10/2026:** integrato protocollo doppia modalità Lyrics v41.2, report editor, suggerimenti musicali sperimentali e piano test gratuito v6-mini.
 - **1.0.0 — 09/10/2026:** Bibbia iniziale, ricerca ufficiale + esperienze Reddit + singolo test audio indipendente, archetipi VRicky e metodologia A/B; nessuna generazione v6 o modifica al generatore HTML. Priorità di test: funk e Variety 0.
