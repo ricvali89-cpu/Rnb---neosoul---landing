@@ -5147,8 +5147,12 @@ function v41Generate(){
  const arrangement=compact?"verses gain energy into a memorable chorus":p.arrangement;
  const mix=voice==="instrumental"?"clear separation, natural dynamics":"upfront lead vocal, natural dynamics, restrained ambience";
  const spec=instruments.map(x=>x.style);
- const style=[p.genre,moods[mood],tempo.style,bpm+" BPM target, consistent tempo throughout",energyNotes[energy],...spec,voices[voice],choirStyle,arrangement,mix,(hasBass&&hasDrums?"separated bass and kick":"")+" short resolved outro"]
+ let style=[p.genre,moods[mood],tempo.style,bpm+" BPM target, consistent tempo throughout",energyNotes[energy],...spec,voices[voice],choirStyle,arrangement,mix,(hasBass&&hasDrums?"separated bass and kick":"")+" short resolved outro"]
    .filter(Boolean).join(", ").replace(/\s+/g," ").trim().replace(/,\s+short resolved outro$/,"; short resolved outro")+".";
+ // Keep explicit tempo, energy, mood and every selected instrument: shorten generic mix/arrangement first.
+ if(style.length>850&&instruments.length<=6){
+   style=[p.genre,moods[mood],tempo.style,bpm+" BPM target, steady pulse",energyNotes[energy],...spec,voices[voice],choirStyle,"verses lift into a melodic chorus","short natural outro"].filter(Boolean).join(", ")+".";
+ }
  const lx=v41MakeLyricsPreview(id("v41-lyrics-input").value,instruments);
  let exc=p.exclude;
  if(voice==="instrumental")exc+=", lead vocals, lyrics";
