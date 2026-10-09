@@ -111,3 +111,16 @@ Il collegamento alla landing originale v40 non è stato toccato. La Beta dedicat
 
 **Beta:** https://vricky-studio-v41-beta.vercel.app
 **Fonte:** studio-v41.html e Bibbia Prompt v6 (GitHub main).
+
+## v41.4 — Future Soul (10/10/2026)
+**Stato: DOCUMENTATO nel codice, resa audio DA_VERIFICARE.**
+
+**DICHIARATO:** l'autore ha usato spesso Future Soul ed è una direzione stilistica che apprezza. Viene aggiunta come quarta identità selezionabile in VRicky Studio, accanto a Funk R&B, Neo Soul e Dark R&B/Funk, senza sostituire la sua identità Contemporary R&B / Neo Soul / Funk.
+
+- **Nuovo preset Future Soul:** combinazione di Future Soul, alternative R&B, armonie Neo Soul e texture elettroniche misurate. Ritmo iniziale 98 BPM **desiderati**, non garantiti da Suno.
+- **Strumenti suggeriti, solo su comando esplicito:** drum machine elettronica, synth bass analogico, shaker, piano Rhodes, synth pad analogico, chitarra clean con chorus. Sei famiglie su dieci disponibili. Strumenti e cori restano personalizzabili; il cambio di genere non sovrascrive gli strumenti già scelti.
+- **Cori suggeriti:** misti con armonie eteree contenute. Voce principale, testo, atmosfera, energia, velocità e BPM restano indipendenti; la persona vocale personale deve essere selezionata direttamente in Suno.
+- **Exclude:** EDM festival drops, harsh dubstep bass, robotic lead vocals, frantic trap hi-hat rolls. Indicazioni creative, non garanzie di comportamento.
+- **Versione beta:** UI, titolo ed export JSON passano a v41.4.0-beta; la landing v40 in `index.html` non cambia.
+- **Smoke test tecnico:** compilazione JavaScript OK, quattro preset con sei strumenti simulati e Lyrics fedeli all'input generano Style/Exclude senza errori. Style test Future Soul 743 caratteri e sotto soglia interna 850. Test reale Safari e ascolto Suno **DA_VERIFICARE**.
+- **Prossima prova:** confrontare Future Soul e Neo Soul sullo stesso testo e sugli stessi strumenti, con due generazioni per variante, registrando prompt, genere, groove, resa vocale e hook nella roadmap.
