@@ -1,11 +1,11 @@
 # BIBBIA PROMPT SUNO v6 — VRicky R&B · Neo Soul · Funk
 
-**Versione documento:** 1.3.0 — 09/10/2026  
+**Versione documento:** 1.4.0 — 10/10/2026  
 **Stato:** BASE DOCUMENTATA / REGISTRO SPERIMENTALE APERTO  
 **Repository:** ricvali89-cpu/Rnb---neosoul---landing (main)  
 **Tool di partenza:** R&B Neo Soul Studio v40, codice incorporato in index.html  
 **Ambito:** composizione testi originali, Style, Lyrics, Exclude, sperimentazione e diagnostica v6.  
-**Controlli diretti VRicky su v6:** **DA_VERIFICARE** — l'autore non ha ancora provato il modello. Nessuno dei test riportati è stato eseguito da questa guida.  
+**Controlli diretti VRicky su v6:** **PARZIALMENTE DOCUMENTATI** — esiste un MP3 generato con Style Future Soul e misurazioni tecniche su Drive; interpretazione di strumenti, voce, qualità artistica e parametri effettivi di Suno restano **DA_VERIFICARE**. Le prove descritte come protocolli sotto non si considerano eseguite.  
 
 > **Principio di onestà:** distinguere sempre DOCUMENTATO (documentazione ufficiale o codice effettivo), DICHIARATO (preferenza/decisione dell'autore), DA_VERIFICARE (ipotesi da testare), STORICO (comportamenti di modelli precedenti), SUPERATO (indicazioni smentite o non più applicabili). Reddit, blog e testimonianze sono osservazioni con campione e metodo variabili, mai garanzie di comportamento.
 
@@ -33,9 +33,24 @@
 
 **DICHIARATO dall'autore (09/10/2026):** la musica VRicky è soprattutto un mix di **R&B moderno + Neo Soul + Funk**, tra sensualità/atmosfera notturna e groove brillante/orecchiabile. Riferimenti di direzione, non modelli da clonare: il funk melodico, i cori e l'energia scenica associabili ad alcuni brani di Bruno Mars; l'intimità, il falsetto e le atmosfere elettroniche notturne associabili ad alcuni brani di The Weeknd.
 
-- **Vincolo d'identità:** un'identità principale per brano (Contemporary R&B o Neo Soul) e Funk come motore ritmico. Una eventuale sfumatura dark/retro/electro deve avere una funzione, non aggiungere un'altra etichetta senza scopo.
+- **Vincolo d'identità aggiornato 10/10/2026:** per nuove canzoni partire preferibilmente da Future Soul melodico/romantico con pocket Alternative R&B, armonie Neo Soul e texture elettroniche sobrie; Contemporary R&B e Funk restano sfumature disponibili e non sono eliminati. Un'identità principale per brano; il genere non obbliga a usare gli stessi strumenti su tutte le produzioni.
 - **Originalità:** evitare richiesta di duplicare la voce identificabile, una melodia, un brano o un arrangiamento specifico di artisti reali. Tradurre i riferimenti in proprietà sonore osservabili.
 - **Consistenza tra brani:** «firma» definita di volta in volta per voce, timbro/ambiente, basso e rapporti di mix, senza bloccare tutti gli elementi creativi.
+
+### Future Soul — nuova firma sonora preferita (DICHIARATO 10/10/2026)
+
+Dopo aver generato **The Past Future**, l'autore dichiara di apprezzare moltissimo lo Style Future Soul utilizzato e di volerlo usare come **punto di partenza abituale per le sue prossime canzoni** («lo userei per tutte le mie canzoni»). La preferenza riguarda il **DNA sonoro comune**, non una direttiva di copiare alla lettera ritmo, strumenti, mood, melodia o interpretazione a ogni brano. Il precedente mix R&B / Neo Soul / Funk rimane parte dell'identità, non è stato cancellato.
+
+**Style originale effettivamente usato, conservato senza modifiche:**
+
+```text
+Future Soul With Alternative R&B Pocket, Neo-Soul Harmony And Tasteful Electronic Textures, Warm Heartfelt Romantic, Moderate 4/4 R&B Groove, Unhurried Backbeat And Balanced Syncopation, 98 Bpm Target, Steady Pulse, Balanced Expressive Dynamics, Modern R&B Drum Kit, Crisp Controlled Kick And Rimshot, Articulate Analog Synth-Bass Pulsing With Kick, Intimate Felt Upright Piano, Soft Warm Chords, Smooth Monophonic Synth Lead Answering Vocals, Steel-String Acoustic Guitar, Delicate Syncopated Strums, Small Orchestral Violin Section Swelling In Chorus, Warm Male Lead, Intimate Verses, Soulful Chorus And Selective Falsetto, Mixed Male And Female Backing Vocals, Restrained Airy Layered Harmonies Behind The Lead, Verses Lift Into A Melodic Chorus, Short Natural Outro.
+```
+
+- **Firma da mantenere secondo la canzone:** groove R&B sincopato e naturale; armonie Neo Soul; calore emotivo; elettronica misurata; voce personale VRicky selezionata in Suno, armonizzazioni e falsetto usati con intenzione; cura per progressione, ritornello e dinamiche.
+- **Variabili da adattare al testo:** BPM (98 è solo il target del singolo esperimento), intensità, groove, tonalità, strumenti singoli (anche piano/archi/chitarra possono essere omessi), sfumature romantiche, malinconiche o energiche. Non aggiungere instruments non selezionati né rendere tutti i brani uguali.
+- **DICHIARATO:** l'autore giudica la resa di *The Past Future* «super bene» ed esprime forte preferenza per lo Style completo; **DOCUMENTATO:** file audio MP3 recuperato su Drive e misure tecniche registrate nel registro Notion; **DA_VERIFICARE:** esito di ascolti professionali comparativi, generalizzabilità dello Style su testi diversi, piena conformità degli strumenti richiesti e valori BPM in nuove generazioni.
+- **Metodo:** riutilizzare Lyrics e persona vocale quando appropriato, personalizzare lo Style per ciascuna canzone, conservare originale e varianti, valutare quale versione serve meglio la canzone. Non si assume disponibilità di Remix nel piano base.
 
 ## 2. Cosa è ufficialmente documentato su v6
 
@@ -458,6 +473,7 @@ Intervalli **DICHIARATI come convenzioni creative VRicky**, non classificazione 
 
 ## 17. Changelog
 
+- **1.4.0 — 10/10/2026:** Future Soul romantico/cinematografico indicato dall'autore come nuova firma sonora preferita per le prossime canzoni; conservato Style originale di *The Past Future* e introdotte regole per adattarlo a ogni brano senza omologazione. Efficacia su più brani DA_VERIFICARE.
 - **1.3.0 — 09/10/2026:** supporto alle cinque fasce di velocità, BPM target manuale e indipendenza dell'energia in v41.3.
 - **1.2.0 — 09/10/2026:** integrazione fonti ufficiali BPM, distinzione prompt/DAW/Sounds e protocollo test v6-mini.
 - **1.1.0 — 09/10/2026:** integrato protocollo doppia modalità Lyrics v41.2, report editor, suggerimenti musicali sperimentali e piano test gratuito v6-mini.
