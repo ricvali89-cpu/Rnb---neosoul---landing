@@ -649,6 +649,10 @@ body:not(.rock-on) .rock-only{display:none!important}
 #v41-ui .v41-lyrics-mode label{display:flex;gap:9px;align-items:center;cursor:pointer;font-size:14px;color:#f8e7f4}
 #v41-ui .v41-lyrics-mode input{accent-color:#f180b5;min-width:19px;min-height:19px}
 #v41-ui #v41-lyrics-report{white-space:pre-line;border-left:2px solid #aa80e4;padding:9px;margin-bottom:12px;line-height:1.6}
+
+#v41-ui #v41-bpm-target{width:100%;max-width:100%;background:#110f1a;border:1px solid #59455d;border-radius:9px;color:#f8f2ff;padding:11px 12px;font-size:16px;font-family:inherit;line-height:1.5}
+#v41-ui #v41-bpm-target:focus-visible{outline:2px solid #ff92b1;outline-offset:2px}
+#v41-ui #v41-bpm-target:invalid{border-color:#ff7884}
 </style>
 </head>
 <body>
@@ -666,7 +670,7 @@ body:not(.rock-on) .rock-only{display:none!important}
 <section id="v41-ui" aria-label="VRicky Studio versione 41">
   <div class="v41-heading">
     <div><h2>VRicky Studio v41</h2><p>R&amp;B · Neo Soul · Funk — meno scelte, pi&ugrave; precisione.<br>Regole basate sulla Bibbia Suno v6; le tecniche da testare restano sperimentali.</p></div>
-    <span class="v41-tag">BETA · v41.2</span>
+    <span class="v41-tag">BETA · v41.3</span>
   </div>
   <div class="v41-grid">
     <label class="v41-field v41-span">Identit&agrave; musicale
@@ -691,6 +695,20 @@ body:not(.rock-on) .rock-only{display:none!important}
         <option value="medium" selected>Media</option>
         <option value="high">Alta</option>
       </select>
+      <span class="v41-hint">Intensità dell'interpretazione: non accelera i BPM.</span>
+    </label>
+    <label class="v41-field v41-span">Velocità del brano
+      <select id="v41-tempo-band" aria-describedby="v41-tempo-note">
+        <option value="very-slow">Molto lento · 55–70 BPM</option>
+        <option value="slow">Lento · 71–85 BPM</option>
+        <option value="moderate">Moderato · 86–100 BPM</option>
+        <option value="moving" selected>Mosso · 101–115 BPM</option>
+        <option value="fast">Veloce · 116–140 BPM</option>
+      </select>
+    </label>
+    <label class="v41-field v41-span">BPM desiderati (personalizzabili)
+      <input id="v41-bpm-target" type="number" inputmode="numeric" min="55" max="140" step="1" value="108" aria-describedby="v41-tempo-note">
+      <span id="v41-tempo-note" class="v41-hint" aria-live="polite">Mosso: 101–115 BPM. È un obiettivo per Suno, non un tempo bloccato. La velocità non cambia con l'energia.</span>
     </label>
     <label class="v41-field">Voce
       <select id="v41-voice">
@@ -4898,7 +4916,7 @@ function v41BuildInstrumentUI(){
    const el=id(c);
    if(el)el.addEventListener("change",()=>{
      if(id("v41-results"))id("v41-results").classList.remove("visible");
-     if(c==="v41-preset"&&id("v41-feedback"))id("v41-feedback").textContent="Preset cambiato: le selezioni degli strumenti sono state conservate. Premi «Carica strumenti suggeriti» solo se desideri sostituirle.";
+     if(c==="v41-preset"){v41TempoOnGenreChanged();if(id("v41-feedback"))id("v41-feedback").textContent="Preset cambiato: strumenti e BPM personalizzati conservati. Carica suggerimenti solo se vuoi modificare gli strumenti.";}
      if(c==="v41-voice"&&el.value==="instrumental"){id("v41-choir").value="none";if(id("v41-feedback"))id("v41-feedback").textContent="Modalità strumentale: cori disattivati. Gli strumenti scelti restano invariati."}
      if(c==="v41-choir"||c==="v41-voice")v41UpdateChoirUI();
    });
@@ -4924,7 +4942,71 @@ const moods={
  euphoric:"confident bright uplifting",
  nostalgic:"bittersweet soulful and reflective"
 };
-const energyNotes={soft:"gentle pocket and controlled low-energy dynamics",medium:"steady confident mid-energy groove",high:"energetic forward-driving groove with tight live-band accents"};
+
+/* v41.3 - perceived speed is independent of performance energy. Target BPM is guidance only. */
+const v41TempoBands={
+ "very-slow":{label:"Molto lento",min:55,max:70,defaultBpm:64,style:"very slow unhurried 4/4 R&B ballad pulse, sparse spacious backbeat, wide rests between phrases, gentle note attacks, relaxed sustained groove, no double-time drum passages"},
+ "slow":{label:"Lento",min:71,max:85,defaultBpm:78,style:"slow relaxed 4/4 neo-soul pocket, spacious drums and restrained hi-hats, laid-back bass phrasing, warm sustained melody, no sudden tempo surges"},
+ "moderate":{label:"Moderato",min:86,max:100,defaultBpm:94,style:"moderate steady 4/4 midtempo R&B groove, clear unhurried backbeat, controlled syncopation and balanced rhythmic spacing"},
+ "moving":{label:"Mosso",min:101,max:115,defaultBpm:108,style:"moving steady 4/4 funk-R&B groove, tight rhythmic pocket with precise syncopation, controlled forward motion"},
+ "fast":{label:"Veloce",min:116,max:140,defaultBpm:124,style:"fast upbeat 4/4 contemporary funk groove, crisp driving backbeat, articulated syncopation and lively rhythmic movement"}
+};
+let v41TempoCustomized=false;
+function v41TempoBandFromBpm(bpm){
+ return Object.keys(v41TempoBands).find(key=>bpm>=v41TempoBands[key].min&&bpm<=v41TempoBands[key].max)||null;
+}
+function v41TempoDescribe(){
+ const key=id("v41-tempo-band").value,band=v41TempoBands[key];
+ const input=id("v41-bpm-target"),bpm=Number(input.value);
+ const message=id("v41-tempo-note");
+ if(!band){message.textContent="Fascia di velocità non valida.";return false}
+ if(input.value===""||!Number.isInteger(bpm)||bpm<55||bpm>140){
+  message.textContent="Inserisci un BPM intero tra 55 e 140; nessuna correzione automatica del valore.";
+  if(typeof input.setCustomValidity==="function")input.setCustomValidity("BPM intero richiesto tra 55 e 140");
+  return false;
+ }
+ if(typeof input.setCustomValidity==="function")input.setCustomValidity("");
+ message.textContent=band.label+" · "+band.min+"–"+band.max+" BPM. Obiettivo attuale: "+bpm+" BPM. Energia e BPM sono indipendenti; Suno può variare.";
+ return true;
+}
+function v41TempoSelected(){
+ const key=id("v41-tempo-band").value,band=v41TempoBands[key];
+ if(!band)return;
+ v41TempoCustomized=true;
+ id("v41-bpm-target").value=String(band.defaultBpm);
+ v41TempoDescribe();
+ if(id("v41-results"))id("v41-results").classList.remove("visible");
+}
+function v41TempoTyped(){
+ const value=id("v41-bpm-target").value,number=Number(value);
+ v41TempoCustomized=true;
+ if(value!==""&&Number.isInteger(number)){
+  const matched=v41TempoBandFromBpm(number);
+  if(matched)id("v41-tempo-band").value=matched;
+ }
+ v41TempoDescribe();
+ if(id("v41-results"))id("v41-results").classList.remove("visible");
+}
+function v41TempoInitialize(){
+ const select=id("v41-tempo-band"),input=id("v41-bpm-target");
+ if(!select||!input)return;
+ select.addEventListener("change",v41TempoSelected);
+ input.addEventListener("input",v41TempoTyped);
+ input.addEventListener("change",v41TempoTyped);
+ const genre=id("v41-preset").value;
+ const configured=v41Presets[genre]?.bpm??108;
+ select.value=v41TempoBandFromBpm(configured)||"moving";
+ input.value=String(configured);
+ v41TempoDescribe();
+}
+function v41TempoOnGenreChanged(){
+ if(v41TempoCustomized)return;
+ const configured=v41Presets[id("v41-preset").value]?.bpm??108;
+ const match=v41TempoBandFromBpm(configured);
+ if(match){id("v41-tempo-band").value=match;id("v41-bpm-target").value=String(configured);v41TempoDescribe()}
+}
+
+const energyNotes={soft:"soft restrained dynamics and intimate expression",medium:"balanced expressive dynamics and confident phrasing",high:"strong expressive accents, richer voicing and dynamic intensity without speeding up the pulse"};
 const voices={
  male:"mature warm male lead, clear intimate phrasing in the verses, open soulful chorus melody and selective restrained falsetto accents",
  female:"warm expressive female lead, close natural articulation in the verses, powerful melodic chorus without theatrical belting",
@@ -5054,7 +5136,9 @@ function v41Generate(){
  const instruments=v41InstrumentStatus("");
  if(instruments.length>10){id("v41-feedback").textContent="Troppi strumenti: massimo 10.";return}
  if(!instruments.length){id("v41-feedback").textContent="Seleziona almeno uno strumento (ad esempio Piano, Basso o Batteria).";id("v41-results").classList.remove("visible");return}
- const bpm=Math.max(68,Math.min(128,p.bpm+(energy==="high"?10:energy==="soft"?-10:0)));
+ if(!v41TempoDescribe()){id("v41-feedback").textContent="BPM non valido: inserisci un intero tra 55 e 140.";id("v41-results").classList.remove("visible");return}
+ const bpm=Number(id("v41-bpm-target").value);
+ const tempo=v41TempoBands[id("v41-tempo-band").value];
  const choirType=voice==="instrumental"?"none":id("v41-choir").value;
  const choirStyle=choirType==="none"?"":v41Choirs[choirType]+", "+v41ChoirStyles[id("v41-choir-style").value];
  const hasDrums=instruments.some(x=>x.family==="drums");
@@ -5063,18 +5147,21 @@ function v41Generate(){
  const arrangement=compact?"verses gain energy into a memorable chorus":p.arrangement;
  const mix=voice==="instrumental"?"clear separation, natural dynamics and controlled ambience":"upfront clear lead vocal, natural dynamics, restrained ambience";
  const spec=instruments.map(x=>x.style);
- const style=[p.genre,moods[mood],energyNotes[energy],bpm+" BPM",...spec,voices[voice],choirStyle,arrangement,mix,(hasBass&&hasDrums?"clear kick and bass separation":"")+" short resolved outro"]
+ const style=[p.genre,moods[mood],tempo.style,bpm+" BPM target, consistent tempo throughout",energyNotes[energy],...spec,voices[voice],choirStyle,arrangement,mix,(hasBass&&hasDrums?"clear kick and bass separation":"")+" short resolved outro"]
    .filter(Boolean).join(", ").replace(/\s+/g," ").trim().replace(/,\s+short resolved outro$/,"; short resolved outro")+".";
  const lx=v41MakeLyricsPreview(id("v41-lyrics-input").value,instruments);
  let exc=p.exclude;
  if(voice==="instrumental")exc+=", lead vocals, lyrics";
+ if(bpm<=85)exc+=", ska rhythms, double-time drums, rushed dance beat";
  const variety=mode==="precise"?"0 (controllo dello Style)":"circa 35 (esperimento, può alterare lo Style)";
  id("v41-style").value=style;
  id("v41-lyrics").value=voice==="instrumental"&&v41LyricsMode()==="suggest"?"[Instrumental Intro]\n\n[Instrumental Verse]\n\n[Instrumental Chorus]\n\n[Instrumental Bridge]\n\n[Instrumental Outro]\n\n[End]":lx.text;
  id("v41-lyrics-report").textContent=voice==="instrumental"&&v41LyricsMode()==="suggest"?"Strumentale: struttura musicale generata senza voce, modificabile prima della copia.":lx.warning;
  id("v41-exclude").value=exc;
- id("v41-style-info").textContent=instruments.length+"/10 strumenti · "+style.length+" caratteri · Modello suggerito: v6-mini (prime prove gratuite) · Variety: "+variety+" · BPM indicativo";
+ id("v41-style-info").textContent=instruments.length+"/10 strumenti · "+style.length+" caratteri · "+tempo.label+" · "+bpm+" BPM desiderati (non garantiti) · v6-mini · Variety: "+variety;
  const messages=[];
+ if(bpm<=85&&instruments.some(x=>x.family==="drums"&&x.variant==="disco-kit"))messages.push("Hai scelto batteria disco-funk con un tempo lento: verifica il contrasto e considera una batteria Neo Soul o con spazzole.");
+ if(bpm<=85&&id("v41-energy").value==="high")messages.push("Energia alta su tempo lento: aumenta intensità, non BPM. Confronta i risultati su v6-mini.");
  if(style.length>850)messages.push("Style oltre 850 caratteri (soglia interna, non limite Suno): il prompt resta completo. Riduci strumenti o descrizioni se i risultati perdono precisione.");
  if(instruments.length>6)messages.push("Hai scelto "+instruments.length+" strumenti: ascolta se sono distinguibili, soprattutto nel ritornello.");
  if(!hasDrums&&!hasBass)messages.push("Hai escluso batteria e basso: il groove sarà affidato agli strumenti rimasti, senza inventare una sezione ritmica nel prompt.");
@@ -5104,7 +5191,7 @@ async function v41Copy(which){
 }
 function v41Export(){
  if(!id("v41-results").classList.contains("visible")){id("v41-feedback").textContent="Genera prima il prompt.";return}
- const obj={document:"VRicky Studio v41 experiment",version:"41.2.0-beta",date:new Date().toISOString(),source:"docs/BIBBIA_PROMPT_SUNO_V6.md",status:"DA_VERIFICARE",preset:id("v41-preset").value,mood:id("v41-mood").value,energy:id("v41-energy").value,voice:id("v41-voice").value,mode:id("v41-mode").value,lyricsMode:v41LyricsMode(),lyricsOriginal:id("v41-lyrics-input").value,instruments:v41SelectedInstruments(),choir:id("v41-voice").value==="instrumental"?"none":id("v41-choir").value,choirStyle:id("v41-choir-style").value,style:id("v41-style").value,lyrics:id("v41-lyrics").value,exclude:id("v41-exclude").value,modelSuggested:"v6-mini",varietySuggested:id("v41-mode").value==="precise"?0:35,maxModeSuggested:false,notes:"No audio tests performed in this export"};
+ const obj={document:"VRicky Studio v41 experiment",version:"41.3.0-beta",date:new Date().toISOString(),source:"docs/BIBBIA_PROMPT_SUNO_V6.md",status:"DA_VERIFICARE",preset:id("v41-preset").value,mood:id("v41-mood").value,energy:id("v41-energy").value,voice:id("v41-voice").value,mode:id("v41-mode").value,tempoBand:id("v41-tempo-band").value,bpmTarget:Number(id("v41-bpm-target").value),bpmStatus:"DA_VERIFICARE in Suno",lyricsMode:v41LyricsMode(),lyricsOriginal:id("v41-lyrics-input").value,instruments:v41SelectedInstruments(),choir:id("v41-voice").value==="instrumental"?"none":id("v41-choir").value,choirStyle:id("v41-choir-style").value,style:id("v41-style").value,lyrics:id("v41-lyrics").value,exclude:id("v41-exclude").value,modelSuggested:"v6-mini",varietySuggested:id("v41-mode").value==="precise"?0:35,maxModeSuggested:false,notes:"No audio tests performed in this export"};
  const blob=new Blob([JSON.stringify(obj,null,2)],{type:"application/json"});
  const u=URL.createObjectURL(blob);const a=document.createElement("a");a.href=u;a.download="vricky-v41-experiment.json";document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(u),1000);
  id("v41-feedback").textContent="Scheda esperimento esportata; nessun dato trasmesso a un server.";
@@ -5129,9 +5216,10 @@ function v41Init(){
   const next=node.nextElementSibling;target.appendChild(node);node=next;count++;
  }
  v41BuildInstrumentUI();
- document.title="VRicky Studio v41.2 — R&B Neo Soul Funk";
- const head=document.querySelector(".container > header h1");if(head)head.textContent="VRicky Studio v41";
- const sub=document.querySelector(".container > header p");if(sub)sub.textContent="R&B · Neo Soul · Funk — beta v41.2, laboratorio avanzato v40 integrato";
+ v41TempoInitialize();
+ document.title="VRicky Studio v41.3 — R&B Neo Soul Funk";
+ const head=document.querySelector(".container > header h1");if(head)head.textContent="VRicky Studio v41.3";
+ const sub=document.querySelector(".container > header p");if(sub)sub.textContent="R&B · Neo Soul · Funk — beta v41.3, laboratorio avanzato v40 integrato";
  v41Generate();
  id("v41-results").classList.remove("visible");
  id("v41-feedback").textContent="Configura il tuo sound e incolla un testo. Nessun test v6 personale è ancora registrato.";
@@ -5145,6 +5233,11 @@ window.v41LoadSuggested=v41LoadSuggested;
 window.v41ClearInstruments=v41ClearInstruments;
 window.v41LyricsMode=v41LyricsMode;
 window.v41MakeLyricsPreview=v41MakeLyricsPreview;
+window.v41TempoBands=v41TempoBands;
+window.v41TempoBandFromBpm=v41TempoBandFromBpm;
+window.v41TempoSelected=v41TempoSelected;
+window.v41TempoTyped=v41TempoTyped;
+window.v41TempoInitialize=v41TempoInitialize;
 window.v41Generate=v41Generate;
 window.v41FillSchema=v41FillSchema;
 window.v41Copy=v41Copy;
