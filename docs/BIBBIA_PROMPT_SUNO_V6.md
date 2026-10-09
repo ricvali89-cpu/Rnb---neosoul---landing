@@ -25,7 +25,8 @@
 12. Sicurezza creativa, versione e governance
 13. Registro esperimenti VRicky
 14. Fonti e data di consultazione
-15. Changelog
+15. Protocollo Lyrics v41.2
+16. Changelog
 
 ## 1. Identità artistica: non cambiare genere per inseguire gli hack
 
@@ -390,7 +391,7 @@ Ogni nuova tecnica deve avere una scheda:
 - Facebook: nessuna prova con metodi e output identificabili reperita nella ricerca pubblica odierna.
 
 
-## 16. Protocollo editor Lyrics v41.2 (nuove regole editoriali)
+## 15. Protocollo editor Lyrics v41.2 (nuove regole editoriali)
 
 **DICHIARATO dall'autore:** il generatore deve proporre un lavoro musicale più approfondito sul testo: riconoscimento sezioni, cori maschili/femminili, armonizzazioni, pause, falsetto e variazioni d'energia secondo testo e strumenti scelti, senza perdere il controllo autoriale.
 
@@ -407,7 +408,7 @@ Ogni nuova tecnica deve avere una scheda:
 
 - [R2] Codice v41.2: https://github.com/ricvali89-cpu/Rnb---neosoul---landing/blob/main/studio-v41.html
 
-## 15. Changelog
+## 16. Changelog
 
 - **1.1.0 — 09/10/2026:** integrato protocollo doppia modalità Lyrics v41.2, report editor, suggerimenti musicali sperimentali e piano test gratuito v6-mini.
 - **1.0.0 — 09/10/2026:** Bibbia iniziale, ricerca ufficiale + esperienze Reddit + singolo test audio indipendente, archetipi VRicky e metodologia A/B; nessuna generazione v6 o modifica al generatore HTML. Priorità di test: funk e Variety 0.
